@@ -29,7 +29,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Get-Dirsubtree.ps1" />
     <Compile Include="Get-FilehashHash.ps1" />

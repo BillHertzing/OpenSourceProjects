@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /Utilities-DiskCleanup/TestDrive
+/PowerShellModules/Utilities-DiskCleanup/TestDrive

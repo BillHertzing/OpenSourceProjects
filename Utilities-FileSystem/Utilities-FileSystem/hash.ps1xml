@@ -1,0 +1,18 @@
+<Types>
+  <Type>
+    <Name>System.IO.FileInfo</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Hash</Name>
+        <GetScriptBlock>
+          $hashAlgorithm = new-object System.Security.Cryptography.MD5CryptoServiceProvider
+          $stream = $this.OpenRead()
+          $hashByteArray = $hashAlgorithm.ComputeHash($stream)
+          $stream.Close()
+          "$hashByteArray"
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>
+
