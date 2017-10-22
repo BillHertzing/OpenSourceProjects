@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>PSPruneOldDisks</Name>
+    <Name>Utilities-Zip</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,9 +27,11 @@
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="PSPruneOldDisks.psd1" />
-    <Compile Include="PSPruneOldDisks.psm1" />
-    <Compile Include="PSPruneOldDisks.tests.ps1" />
+    <Compile Include="Compress-FSItems.ps1" />
+    <Compile Include="Expand-FSItems.ps1" />
+    <Compile Include="Utilities-Zip.psd1" />
+    <Compile Include="Utilities-Zip.psm1" />
+    <Compile Include="Utilities-Zip.tests.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
