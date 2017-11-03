@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /Utilities-DiskCleanup/TestDrive
 /PowerShellModules/Utilities-DiskCleanup/TestDrive
+/DotNetCoreApps/ACE
+/ReferencedProjects/cryptocurrencies
