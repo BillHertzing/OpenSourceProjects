@@ -1,39 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-using Polly;
 namespace ATAP.WebGet {
-    public interface IWebGet
-    {
-        Policy Policy { get; set;}
+    public interface IWebRequestDictT {
+        Dictionary<WebRequestIDT, WebRequestDataT> WebRequests { get; set; }
     }
-    public class WebGet :IWebGet {
-        Policy policy;
+    public class WebGet : IWebRequestDictT
+    {
+        Dictionary<WebRequestIDT, WebRequestDataT> webRequests;
         public WebGet()
         {
         }
-        public Policy Policy { get => policy; set => policy = value; }
+
+        public Dictionary<WebRequestIDT, WebRequestDataT> WebRequests { get => webRequests; set => webRequests = value; }
+
+        //public Task AsyncGet()
+        //{
+        //}
+        //public SyncGet()
+        //{
+        //}
     }
-    public interface IWebGetBuilder
-    {
+    public interface IWebGetBuilder {
         WebGet Build();
     }
-    public interface IWebGetSetPolicy
-    {
-        IWebGetBuilder SetPolicy(Policy policy);
-    }
-    public class WebGetBuilder : IWebGetBuilder, IWebGetSetPolicy
-    {
-        Policy policy;
+    public class WebGetBuilder : IWebGetBuilder {
+        Dictionary<WebRequestIDT, WebRequestDataT> WebRequests { get; set; }
         public WebGetBuilder()
         {
         }
-        public IWebGetBuilder SetPolicy(Policy policy) { this.policy = policy;
-            return this;
+         public WebGet Build()
+        {
+            return new WebGet();
         }
-        public WebGet Build() { return new WebGet();
-        }
-        public Policy Policy { get { return policy; }
-            set { policy = value; }
+        public static WebGetBuilder CreateNew()
+        {
+            return new WebGetBuilder();
         }
     }
 }

@@ -5,9 +5,6 @@ using static ATAP.CryptoCurrency.ExtensionHelpers;
 namespace ATAP.CryptoCurrency {
     public enum Proofs {
         //[LocalizedDescription("Work", typeof(Resource))]
-        //[LocalizedDescription("Work", typeof(Resource))]
-        //[LocalizedDescription("Work", typeof(Resource))]
-        //[LocalizedDescription("Work", typeof(Resource))]
         [Description("Work")]
         Work,
         [Description("Stake")]
@@ -88,9 +85,7 @@ namespace ATAP.CryptoCurrency {
         }
         public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
     }
-    public interface IFees {
-        double FeeAsAPercent { get; set; }
-    }
+
     public class HashRate {
         double hashRatePerTimeSpan;
         TimeSpan hashRateSpan;
@@ -132,11 +127,9 @@ namespace ATAP.CryptoCurrency {
         TimeSpan AvgBlockTime { get; set; }
     }
     public interface ICryptoCoin : ICryptoCoinE, IDTSandSpan, IHashRate, IAvgBlockTime {
-        //CoinsE Coin { get; set; }
-        //DTSandSpan DTSandSpan { get; set; }
-        //HashRate HashRate { get; set; }
         }
-    public class CryptoCoin : ICryptoCoinE, IDTSandSpan, IHashRate, IAvgBlockTime, IBlockReward {
+    public partial class CryptoCoin : ICryptoCoin
+    {
         TimeSpan avgBlockTime;
         double blockRewardPerBlock;
         CoinsE coin;
@@ -207,14 +200,8 @@ namespace ATAP.CryptoCurrency {
 //            //Blockreward = blockreward == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(blockreward)) : blockreward;
 //            //Hashrate = hashrate == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(hashrate)) : hashrate;
 //        // provides an estimate of the probability
-//        public decimal AvgNumCoinForHashrateOverTimeSpan(decimal hashrate, TimeSpan t)
-//        {
-//            decimal HRasAPercentOfTotal = hashrate / Networkhashrate;
-//            decimal NetworkCoinsPerSecond = Blockreward / Convert.ToDecimal(Avgblocktime.TotalSeconds);
-//            decimal AvgCoinsOverSpan = NetworkCoinsPerSecond;
-//            return AvgCoinsOverSpan;
-//        }
-//    public class CoinStatsXMR : CoinStatsCryptoNote
+
+    //    public class CoinStatsXMR : CoinStatsCryptoNote
 //    {
 //        public CoinStatsXMR(CoinsE coin, DateTime dts, TimeSpan dateTimeSpan, TimeSpan avgblocktime, decimal networkhashrate, decimal blockreward, decimal difficulty) : base(coin, dts, dateTimeSpan, avgblocktime, networkhashrate, blockreward, difficulty) { }
 //        //public CoinStatsXMR(IHTTPClientGetter getter, IGetterArgsHTTPClient getterargs)

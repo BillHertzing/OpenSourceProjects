@@ -1,69 +1,47 @@
-﻿using Fiver.Api.HttpClient;
-using Newtonsoft.Json;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading.Tasks;
-using static ATAP.CryptoCurrency.ExtensionHelpers;
-
-namespace ATAP.CryptoCurrency
-{
-        public enum Getters
-        {
-            [Description("HTTPClient")]
-            HTTPClient,
-            [Description("File")]
-            File
-        }
-
-
+namespace ATAP.CryptoCurrency {
+    public enum Getters {
+        [Description("HTTPClient")]
+        HTTPClient,
+        [Description("File")]
+        File
+    }
     //public class GetterArgs : IGetterArgs
     //{
     //    GetterArgs _getterArgs;
-
     //    public GetterArgs GetterArgs { get => _GetterArgs;  }
-
     //    public GetterArgs(GetterArgsv GetterArgs)
     //    {
     //        _getterArgs = GetterArgs;
     //    }
     //}
-
-    public interface IFileGetterArgs : IGetterArgs
-    {
+    public interface IFileGetterArgs : IGetterArgs {
         string Path { get; }
     }
-
     //public class FileGetterArgs : GetterArgs, IFileGetterArgs
     //{
     //    private string _path;
-
     //    string IFileGetterArgs.Path { get { return _path; } }
-
     //    public FileGetterArgs(Getters getter, string path) : base(getter)
     //    {
     //        _path = path;
     //    }
     //    public FileGetterArgs(Getters getter) : this(getter, "") { }
     //}
-
-
-   
     //public class SortableHTTPClientGetterArgs : HTTPClientGetterArgs, IComparable
     //{
     //    private int _sortPreference;
     //    private HTTPClientGetterArgs _a;
     //    public int SortPreference { get => _sortPreference; set => _sortPreference = value; }
     //    public HTTPClientGetterArgs A { get => _a; set => _a = value; }
-
     //    public SortableHTTPClientGetterArgs(int sortPreference, HTTPClientGetterArgs a):base(a.Getter)
     //    {
     //        SortPreference = sortPreference;
     //        A = a ?? throw new ArgumentNullException(nameof(a));
     //    }
-
     //    private class SortBySortpreference : IComparer
     //    {
     //        int IComparer.Compare(object a, object b)
@@ -88,34 +66,24 @@ namespace ATAP.CryptoCurrency
     //public class SortedListHTTPClientGetterArgs
     //{
     //    private SortableHTTPClientGetterArgs _list;
-
     //    public SortableHTTPClientGetterArgs List { get => _list; set => _list = value; }
-
     //    public SortedListHTTPClientGetterArgs(SortableHTTPClientGetterArgs list)
     //    {
     //        List = list ?? throw new ArgumentNullException(nameof(list));
     //    }
-
-
     //}
-
-    public interface IGetterHTTPClient<T>
-    {
-        IGetterArgsHTTPClient GetterArgsHTTPClient { get; }
+    public interface IGetterHTTPClient<T> {
         Task<T> GetAsync(IGetterArgsHTTPClient hTTPClientGetterArgs);
+        IGetterArgsHTTPClient GetterArgsHTTPClient { get; }
     }
-
     //public class HTTPClientGetter : IHTTPClientGetter
     //{
-
     //    private HTTPClientGetterArgs _hTTPClientGetterArgs;
     //    public IGetterArgsHTTPClient HTTPClientGetterArgs { get { return _hTTPClientGetterArgs; } }
-
     //    public HTTPClientGetter(HTTPClientGetterArgs hTTPClientGetterArgs)
     //    {
     //        _hTTPClientGetterArgs = hTTPClientGetterArgs ?? throw new ArgumentNullException(nameof(hTTPClientGetterArgs));
     //    }
-
     //    public async Task<CoinStatsCryptoNote> GetAsync(IGetterArgsHTTPClient hTTPClientGetterArgs)
     //    {
     //        var requestUri = hTTPClientGetterArgs.URI;
@@ -139,166 +107,90 @@ namespace ATAP.CryptoCurrency
     //        ;
     //    }
     //}
-
-    public interface IGetterArgsHTTPClient : IGetterArgs
-    {
-        string Verb { get; }
+    public interface IGetterArgsHTTPClient : IGetterArgs {
         string URI { get; }
+        string Verb { get; }
     }
-    public class GetterArgsHTTPClient : IGetterArgs, IGetterArgsHTTPClient
-    {
-
-        private string _verb;
-        private string _uri;
-
-        string IGetterArgsHTTPClient.Verb { get { return _verb; } }
-        string IGetterArgsHTTPClient.URI { get { return _uri; } }
-
-        public IGetterArgs GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+    public class GetterArgsHTTPClient : IGetterArgs, IGetterArgsHTTPClient {
+        string _uri;
+        string _verb;
         //public IGetterArgs GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public GetterArgsHTTPClient(string verb, string uri)
         {
             _verb = verb;
             _uri = uri;
         }
-
+        string IGetterArgsHTTPClient.URI { get { return _uri; } }
+        string IGetterArgsHTTPClient.Verb { get { return _verb; } }
+        public IGetterArgs GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
-
-    public class GetterArgs<T> : IGetterArgs, IGetterArgsHTTPClient
-    {
+    public class GetterArgs<T> : IGetterArgs, IGetterArgsHTTPClient {
+        string _uri;
+        string _verb;
         public GetterArgs(string verb, string uri)
         {
             _verb = verb;
             _uri = uri;
         }
-        private string _verb;
-        private string _uri;
-
-        string IGetterArgsHTTPClient.Verb { get { return _verb; } }
-        string IGetterArgsHTTPClient.URI { get { return _uri; } }
-
         IGetterArgs IGetterArgs.GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+        string IGetterArgsHTTPClient.URI { get { return _uri; } }
+        string IGetterArgsHTTPClient.Verb { get { return _verb; } }
         //public IGetterArgs GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         //public GetterArgsHTTPClient(string verb, string uri)
         //{
         //    _verb = verb;
         //    _uri = uri;
         //}
     }
-
-    public interface IGetterArgs
-    {
+    public interface IGetterArgs {
         IGetterArgs GetterArgs { get; set; }
     }
-    public interface IGetter
-    {
+    public interface IGetter {
         Getters Kind { get; }
     }
-
-    public class Getter : IGetter, IGetterArgs
-    {
-        private Getters _kind;
-        public Getters Kind { get { return _kind; } }
-
-        private Dictionary<Getters, IGetterArgs> GetterArgsDict { get; set; }
-
-        public IGetterArgs GetterArgsHTTPClient
+    public class Getter : IGetter, IGetterArgs {
+        Getters _kind;
+        public Getter(Getters kind)
         {
-            get
-            {
-                if (GetterArgsDict.ContainsKey(Getters.HTTPClient))
-                {
-                    return GetterArgsDict[Getters.HTTPClient];
-                }
-                else
-                {
-                    throw new NotSupportedException("This Getter has no GetterArgs for a Getters.HTTPClient get");
-
-                }
-            }
-            set
-            {
-                //ToDo: determine if validation of not null is needed
-                GetterArgsDict[Getters.HTTPClient] = value;
-            }
+            _kind = kind;
         }
-
-        public IGetterArgs GetterArgsFile
-        {
-            get
-            {
-                if (GetterArgsDict.ContainsKey(Getters.File))
-                {
-                    return GetterArgsDict[Getters.File];
-                }
+        Dictionary<Getters, IGetterArgs> GetterArgsDict { get; set; }
+        public IGetterArgs GetterArgs { get { switch(_kind) { case Getters.HTTPClient: return GetterArgsHTTPClient.GetterArgs; case Getters.File: return GetterArgsFile.GetterArgs; default: throw new NotSupportedException("This Getter does not support getting a getter kind of {0}"); } }
+            set { switch(_kind) { case Getters.HTTPClient: GetterArgsHTTPClient.GetterArgs = value; break; case Getters.File: GetterArgsFile.GetterArgs = value; break; default: throw new NotSupportedException("This Getter does not support setting a getter kind of {0}"); } } }
+        public IGetterArgs GetterArgsFile { get { if(GetterArgsDict.ContainsKey(Getters.File)) { return GetterArgsDict[Getters.File]; }
                 else
                 {
                     // It seems that google for "localization of exception message" indicates that only ValidationException or BusinessLayerException should be localized
                     throw new NotSupportedException("This Getter has no GetterArgs for a Getters.File get");
 
-                }
-            }
-            set
-            {
+                } }
+            set {
                 //ToDo: determine if validation of not null is needed
-                GetterArgsDict[Getters.File] = value;
-            }
-        }
-        public IGetterArgs GetterArgs {
-            get {
-                switch (_kind)
+ GetterArgsDict[Getters.File] = value; } }
+        public IGetterArgs GetterArgsHTTPClient { get { if(GetterArgsDict.ContainsKey(Getters.HTTPClient)) { return GetterArgsDict[Getters.HTTPClient]; }
+                else
                 {
-                    case Getters.HTTPClient:
-                        return GetterArgsHTTPClient.GetterArgs;
-                    case Getters.File:
-                        return GetterArgsFile.GetterArgs;
-                    default:
-                        throw new NotSupportedException("This Getter does not support getting a getter kind of {0}");
-                }
-            }
-            set            {
-                switch (_kind)
-                {
-                    case Getters.HTTPClient:
-                        GetterArgsHTTPClient.GetterArgs = value;
-                        break;
-                    case Getters.File:
-                        GetterArgsFile.GetterArgs = value;
-                        break;
-                    default:
-                        throw new NotSupportedException("This Getter does not support setting a getter kind of {0}");
-                }
-            }
-        }
-        public Getter(Getters kind)
-        {
-            _kind = kind;
-        }
-    }
+                    throw new NotSupportedException("This Getter has no GetterArgs for a Getters.HTTPClient get");
 
+                } }
+            set {
+                //ToDo: determine if validation of not null is needed
+ GetterArgsDict[Getters.HTTPClient] = value; } }
+        public Getters Kind { get { return _kind; } }
+    }
     // GetterBuilder interfaces and class
-    public interface IGetterBuilderGetSetGetterArgs
-    {
+    public interface IGetterBuilderGetSetGetterArgs {
         IGetter GetSetGetterArgs(IGetterArgs getterArgs);
     }
-    public interface IGetterBuilder
-    {
+    public interface IGetterBuilder {
         IGetter Build(Getters kind);
     }
-
-    public class GetterBuilder: IGetterBuilder, IGetterBuilderGetSetGetterArgs
-    {
+    public class GetterBuilder : IGetterBuilder, IGetterBuilderGetSetGetterArgs {
         public GetterBuilder() { }
         public IGetter Build(Getters kind)
         {
             IGetter g;
-            switch(kind)
-            {
-                case Getters.HTTPClient:
+            switch(kind) { case Getters.HTTPClient:
                     g = new Getter(Getters.HTTPClient);
                     break;
                 case Getters.File:
@@ -306,17 +198,13 @@ namespace ATAP.CryptoCurrency
                     break;
                 default:
                     //ToDo add an exception message for unsupported enumerations
-                    throw new NotSupportedException();
-            }
+                    throw new NotSupportedException(); }
             return g;
         }
-
-        public IGetter Build(Getters kind,IGetterArgs getterArgs)
+        public IGetter Build(Getters kind, IGetterArgs getterArgs)
         {
             IGetter g;
-            switch (kind)
-            {
-                case Getters.HTTPClient:
+            switch(kind) { case Getters.HTTPClient:
                     g = new Getter(Getters.HTTPClient);
                     break;
                 case Getters.File:
@@ -324,23 +212,18 @@ namespace ATAP.CryptoCurrency
                     break;
                 default:
                     //ToDo add an exception message for unsupported enumerations
-                    throw new NotSupportedException();
-            }
+                    throw new NotSupportedException(); }
             return g;
         }
-
         public IGetter GetSetGetterArgs(IGetterArgs getterArgs)
         {
             throw new NotImplementedException();
         }
     }
-
-    //public class  getterdict1 {
-    //    Tuple<Coins, IGetterArgs, Object> _dict;
-    //    Tuple<Coins, IGetterArgs, Object> Dict { get { return _dict; } }
-    //    public getterdict1() { _dict=new}
-    //}
-
-
+//public class  getterdict1 {
+//    Tuple<Coins, IGetterArgs, Object> _dict;
+//    Tuple<Coins, IGetterArgs, Object> Dict { get { return _dict; } }
+//    public getterdict1() { _dict=new}
+//}
 }
 

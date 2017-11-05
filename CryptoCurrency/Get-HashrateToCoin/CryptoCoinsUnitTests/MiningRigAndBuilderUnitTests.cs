@@ -13,6 +13,8 @@ namespace ATAP.CryptoCurrency.MiningRigAndBuilderUnitTests {
         double powerConsumptionValue;
         int powerConsumptionUOM;
         PowerConsumption powerConsumption;
+        double feeAsAPercent;
+        Fees fees;
 
         public TimeSpan TimeSpan { get => timeSpan; set => timeSpan = value; }
         public HashRate HashRate { get => hashRate; set => hashRate = value; }
@@ -23,6 +25,8 @@ namespace ATAP.CryptoCurrency.MiningRigAndBuilderUnitTests {
         public double HashRateValue { get => hashRateValue; set => hashRateValue = value; }
         public int HashRateUOM { get => hashRateUOM; set => hashRateUOM = value; }
         public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
+        public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
+        public Fees Fees { get => fees; set => fees = value; }
 
         public MinerPrimitives()
         {
@@ -36,17 +40,23 @@ namespace ATAP.CryptoCurrency.MiningRigAndBuilderUnitTests {
             powerConsumptionValue = 1;
             powerConsumptionUOM = 1000;
             powerConsumption = new PowerConsumption(powerConsumptionValue, powerConsumptionUOM);
-            
+            feeAsAPercent = 1.0;
+            fees = new Fees(FeeAsAPercent);
+
+
         }
     }
-    public class MinerConfigPrimitives 
+    public class MinerConfigPrimitives : MinerPrimitives
     {
         MinerConfig minerConfig;
+        MinerConfigIDT minerConfigID;
+        Dictionary<MinerConfigIDT, MinerConfig> minerConfigDict;
         public MinerConfigPrimitives()
         {
+            minerConfig = MinerConfigBuilder.CreateNew().Build();
+            minerConfigID = new MinerConfigIDT("1");
+            minerConfigDict = new Dictionary<MinerConfigIDT, MinerConfig> { { minerConfigID, minerConfig } };
             //MinerConfig minerConfig = MinerConfigBuilder.CreateNew().Add(MinerPrimitives.PowerConsumption).Build;
-            //Dictionary<MinerConfigIDT, MinerSW> MinerSWDict = new Dictionary<MinerConfigIDT, MinerConfig>().Add("MinerConfig1", minerConfig1).Build();
-            //Dictionary<MinerConfigIDT, MinerConfig> MinerConfigDict = new Dictionary<MinerConfigIDT, MinerConfig>().Add("MinerConfig1", minerConfig1).Build();
             //Dictionary<MinerIDT, Miner> MinerDict = new Dictionary<MinerIDT, Miner>().Add("Miner1", new Miner());
             //MiningRigs = new List<MiningRig>(MiningRigBuilder.CreateNew().AddMiners(new Dictionary < MinerIDT, Miner > ("Miner1",MinerBuilder.CreateNew().AddMinerConfigs()))).Build());
         }
@@ -58,6 +68,9 @@ namespace ATAP.CryptoCurrency.MiningRigAndBuilderUnitTests {
         {
             this.minerPrimitives = minerPrimitives;
         }
+
+       
+
 
         [Fact]
         void MinerConfigBuilderReturnsMinerConfigT()
@@ -71,6 +84,19 @@ namespace ATAP.CryptoCurrency.MiningRigAndBuilderUnitTests {
             var p = minerPrimitives.PowerConsumption;
             var a = MinerConfigBuilder.CreateNew().AddPowerConsumption(p).Build();
             Assert.Equal(p, a.PowerConsumption);
+        }
+        [Fact]
+        void MinerConfigBuilderAddFeesReturnsMinerConfigWithFees()
+        {
+            var f = minerPrimitives.Fees;
+            var a = MinerConfigBuilder.CreateNew().AddFees(f).Build();
+            Assert.Equal(f.FeeAsAPercent, a.Fees.FeeAsAPercent);
+        }
+        void MinerConfigBuilderAddHashRateReturnsMinerConfigWithHashRate()
+        {
+            var h = minerPrimitives.FeeAsAPercent;
+            var a = MinerConfigBuilder.CreateNew().AddFees(minerPrimitives.Fees).Build();
+            Assert.Equal(minerPrimitives.FeeAsAPercent, a.Fees.FeeAsAPercent);
         }
     }
     public class MiningRigTests : IClassFixture<MinerConfigPrimitives>

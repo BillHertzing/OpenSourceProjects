@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-
 namespace ATAP.CryptoCurrency {
-    public enum MinerSWE
-    {
+    public enum MinerSWE {
+        //[LocalizedDescription("ethmine", typeof(Resource))]
+        //[LocalizedDescription("ethmine", typeof(Resource))]
+        //[LocalizedDescription("ethmine", typeof(Resource))]
         //[LocalizedDescription("ethmine", typeof(Resource))]
         [Description("ethmine")]
-        ethmine,
+        ETHMINE,
         [Description("claymore")]
-        claymore,
+        CLAYMORE,
         [Description("genoil")]
-        genoil,
+        GENOIL,
     }
-
-    public class PowerConsumption 
-    {
+    public class PowerConsumption {
         double powerConsumed;
         int powerConsumedUOM;
         public PowerConsumption(double powerConsumed, int powerConsumedUOM)
@@ -26,62 +25,60 @@ namespace ATAP.CryptoCurrency {
         public double PowerConsumed { get => powerConsumed; set => powerConsumed = value; }
         public int PowerConsumedUOM { get => powerConsumedUOM; set => powerConsumedUOM = value; }
     }
-public interface IPowerConsumption
-{
-    PowerConsumption PowerConsumption { get; set; }
-}
-    public class MinerConfig : IHashRates, IPowerConsumption , IFees
+    public interface IPowerConsumption {
+        PowerConsumption PowerConsumption { get; set; }
+    }
+    public interface IFees
     {
+        Fees Fees { get; set; }
+    }
+    public class MinerConfig : IHashRates, IPowerConsumption, IFees {
+        Fees fees;
         Dictionary<CoinsE, List<HashRate>> hashRates;
-        public Dictionary<CoinsE, List<HashRate>> HashRates { get => hashRates; set => hashRates = value; }
         PowerConsumption powerConsumption;
-        public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
-
-        double feeAsAPercent;
-        public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
-
-        public MinerConfig(Dictionary<CoinsE, List<HashRate>> hashRates, PowerConsumption powerConsumption,double feeAsAPercent)
+        public MinerConfig(Dictionary<CoinsE, List<HashRate>> hashRates, PowerConsumption powerConsumption, Fees fees)
         {
             this.hashRates = hashRates;
             this.powerConsumption = powerConsumption;
-            this.feeAsAPercent = feeAsAPercent;
+            this.fees = fees;
         }
-
+        public Fees Fees { get => fees; set => fees = value; }
+        public Dictionary<CoinsE, List<HashRate>> HashRates { get => hashRates; set => hashRates = value; }
+        public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
     }
     public interface IMinerConfigBuilder {
         MinerConfig Build();
     }
-    public class MinerConfigBuilder : IMinerConfigBuilder
-    {
-        double feeAsAPercent;
+    public class MinerConfigBuilder  {
+        Fees fees;
         Dictionary<CoinsE, List<HashRate>> hashRates;
-        public Dictionary<CoinsE, List<HashRate>> HashRates { get => hashRates; set => hashRates = value; }
         PowerConsumption powerConsumption;
-        public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
-        public MinerConfigBuilder()       {        }
-        public IMinerConfigBuilder AddHashRates(Dictionary<CoinsE, List<HashRate>> hashRates)
+        public MinerConfigBuilder() { }
+        public MinerConfigBuilder AddFees(Fees fees)
+        {
+            this.fees = fees;
+            return this;
+        }
+        public MinerConfigBuilder AddHashRates(Dictionary<CoinsE, List<HashRate>> hashRates)
         {
             this.hashRates = hashRates;
             return this;
         }
-        public IMinerConfigBuilder AddPowerConsumption(PowerConsumption powerConsumption)
+        public MinerConfigBuilder AddPowerConsumption(PowerConsumption powerConsumption)
         {
             this.powerConsumption = powerConsumption;
             return this;
         }
-        public IMinerConfigBuilder AddFees(double feeAsAPercent)
-        {
-            this.feeAsAPercent = feeAsAPercent;
-            return this;
-        }
         public MinerConfig Build()
         {
-            return new MinerConfig(hashRates, powerConsumption, feeAsAPercent);
+            return new MinerConfig(hashRates, powerConsumption, fees);
         }
         public static MinerConfigBuilder CreateNew()
         {
             return new MinerConfigBuilder();
         }
+        public Dictionary<CoinsE, List<HashRate>> HashRates { get => hashRates; set => hashRates = value; }
+        public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
     }
     public class MinerConfigIDT {
         string iD;
@@ -92,7 +89,6 @@ public interface IPowerConsumption
         public string ID { get { return iD; }
             set { iD = value; } }
     }
-
     public class MiningRig {
         Dictionary<MinerConfigIDT, MinerConfig> minerConfigs;
         public MiningRig(Dictionary<MinerConfigIDT, MinerConfig> minerConfigs)

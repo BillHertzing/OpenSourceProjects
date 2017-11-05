@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoCoins", "Get-Hashrate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoCoinsUnitTests", "CryptoCoinsUnitTests\CryptoCoinsUnitTests.csproj", "{80A707AB-703C-47A8-8546-E86BAC240883}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebGet", "WebGet\WebGet.csproj", "{02E1405A-1865-43B2-910A-FA678EC5BD93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebGet", "WebGet\WebGet.csproj", "{02E1405A-1865-43B2-910A-FA678EC5BD93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebGetUnitTests", "WebGetUnitTests\WebGetUnitTests.csproj", "{A0B6D971-9DB6-4277-BDE7-FDFED238C98D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebGetUnitTests", "WebGetUnitTests\WebGetUnitTests.csproj", "{A0B6D971-9DB6-4277-BDE7-FDFED238C98D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoCoinConsole", "CryptoCoinConsole\CryptoCoinConsole.csproj", "{82AD4C90-80D3-4BFD-A2DD-EC9A010688F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{A0B6D971-9DB6-4277-BDE7-FDFED238C98D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0B6D971-9DB6-4277-BDE7-FDFED238C98D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0B6D971-9DB6-4277-BDE7-FDFED238C98D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82AD4C90-80D3-4BFD-A2DD-EC9A010688F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82AD4C90-80D3-4BFD-A2DD-EC9A010688F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82AD4C90-80D3-4BFD-A2DD-EC9A010688F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82AD4C90-80D3-4BFD-A2DD-EC9A010688F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
