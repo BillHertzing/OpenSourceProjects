@@ -19,6 +19,8 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
         HashRate hashRate1000X;
         PowerConsumption powerConsumption;
         double feeAsAPercent;
+        List<CoinsE> coinlist;
+
 
         public TimeSpan TimeSpan { get => timeSpan; set => timeSpan = value; }
         public HashRate HashRate { get => hashRate; set => hashRate = value; }
@@ -28,6 +30,7 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
         public int HashRateUOM { get => hashRateUOM; set => hashRateUOM = value; }
         public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
         public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
+        public List<CoinsE> CoinList { get => coinlist; set => coinlist = value; }
 
         public CryptoCoinPrimitives()
         {
@@ -39,8 +42,8 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
             hashRate2T = new HashRate(hashRatePerTimeSpan, hashRateUOM, timeSpan + timeSpan);
             hashRate1000X = new HashRate(hashRatePerTimeSpan, hashRateUOM * 1000, timeSpan);
             feeAsAPercent = 1.0;
-
-
+            coinlist = new List<CoinsE> { CoinsE.ETH, CoinsE.BTC };
+            
         }
     }
         public class CryptoCoinUnitTests : IClassFixture<CryptoCoinPrimitives>
@@ -69,21 +72,21 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
         {
             var b = new CryptoCoinBuilder();
             var c = b.Build();
-            Assert.Equal(c.Coin, default(CoinsE));
+            Assert.Equal(default(CoinsE), c.Coin);
         }
         [Fact]
         public void WithDefaultCoinEReturnsObjectOfCryptoCoinTypeHavingDefaultCoinsEValue()
         {
             var b = new CryptoCoinBuilder();
             var c = b.AddCoin(default(CoinsE)).Build();
-            Assert.Equal(c.Coin, default(CoinsE));
+            Assert.Equal(default(CoinsE), c.Coin);
         }
         [Fact]
         public void WithBTCCoinEReturnsObjectOfCryptoCoinTypeHavingBTCCoinValue()
         {
             var b = new CryptoCoinBuilder();
             var c = b.AddCoin(CoinsE.BTC).Build();
-            Assert.Equal(c.Coin, CoinsE.BTC);
+            Assert.Equal(CoinsE.BTC, c.Coin);
         }
         [Fact]
         public void WithRandomCoinEReturnsObjectOfCryptoCoinTypeHavingSameCoinValue()
@@ -103,8 +106,8 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
             Assert.Equal(c.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
             Assert.Equal(c.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
         }
-    }
-    public class CryptoCoinAndBuilderUnitTests
+        [Fact]
+        void NumCoinsCreated()
         {
             // Test for method that returns the average number of coins generated based on coin, miner hashrate, and TimeSpan
             //[Fact]
@@ -117,5 +120,8 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
             //    Assert.NotNull(_avgNumCCoinsCreated);
             //}
 
+
         }
+    }
+
     }

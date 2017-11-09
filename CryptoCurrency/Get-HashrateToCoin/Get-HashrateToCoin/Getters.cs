@@ -124,24 +124,7 @@ namespace ATAP.CryptoCurrency {
         string IGetterArgsHTTPClient.Verb { get { return _verb; } }
         public IGetterArgs GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
-    public class GetterArgs<T> : IGetterArgs, IGetterArgsHTTPClient {
-        string _uri;
-        string _verb;
-        public GetterArgs(string verb, string uri)
-        {
-            _verb = verb;
-            _uri = uri;
-        }
-        IGetterArgs IGetterArgs.GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        string IGetterArgsHTTPClient.URI { get { return _uri; } }
-        string IGetterArgsHTTPClient.Verb { get { return _verb; } }
-        //public IGetterArgs GetterArgs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        //public GetterArgsHTTPClient(string verb, string uri)
-        //{
-        //    _verb = verb;
-        //    _uri = uri;
-        //}
-    }
+
     public interface IGetterArgs {
         IGetterArgs GetterArgs { get; set; }
     }
