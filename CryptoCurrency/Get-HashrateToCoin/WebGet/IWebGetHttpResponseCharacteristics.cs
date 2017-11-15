@@ -1,5 +1,5 @@
 ﻿using System;
-public interface IWebGetHttpResponseCharacteristics
+public interface IWebGetHttpResponseWebGetHttpResponseHowToHandle
 {
     int Follow3xxDepth { get; set; }
     bool Follow3xx { get; set; }

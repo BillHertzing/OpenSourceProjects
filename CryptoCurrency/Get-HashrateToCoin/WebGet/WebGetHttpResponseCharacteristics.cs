@@ -10,14 +10,18 @@ namespace ATAP.WebGet
 {
 
 
-    public class WebGetHttpResponseCharacteristics : IWebGetHttpResponseCharacteristics
+    public class WebGetHttpResponseHowToHandle : IWebGetHttpResponseWebGetHttpResponseHowToHandle
     {
 
         bool follow3xx;
         int follow3xxDepth;
         Type typeName;
-        public WebGetHttpResponseCharacteristics()
+        public WebGetHttpResponseHowToHandle()
         {
+        }
+        public WebGetHttpResponseHowToHandle(Type typeName)
+        {
+            this.typeName = typeName;
         }
         public bool Follow3xx { get => follow3xx; set => follow3xx = value; }
         public int Follow3xxDepth { get => follow3xxDepth; set => follow3xxDepth = value; }
@@ -29,4 +33,30 @@ namespace ATAP.WebGet
         // ToDo: handle YAML
         // ToDo: handle JSON
     }
-}
+
+    public interface IWebGetHttpResponseHowToHandle
+    {
+        WebGetHttpResponseHowToHandle Build();
+    }
+    public class WebGetHttpResponseHowToHandleBuilder
+    {
+        Type typeName;
+        public WebGetHttpResponseHowToHandleBuilder()
+        {
+        }
+
+        public WebGetHttpResponseHowToHandleBuilder AddTypeName(Type typeName)
+        {
+            this.typeName = typeName;
+            return this;
+        }
+        public WebGetHttpResponseHowToHandle Build()
+        {
+            return new WebGetHttpResponseHowToHandle(typeName);
+        }
+        public static WebGetHttpResponseHowToHandleBuilder CreateNew()
+        {
+            return new WebGetHttpResponseHowToHandleBuilder();
+        }
+    }
+    }

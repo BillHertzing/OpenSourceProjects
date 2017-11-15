@@ -101,10 +101,12 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
         [Fact]
         public void WithNetworkHashRateReturnsObjectOfCryptoCoinTypeHavingSettableGettableNetworkHashRate()
         {
-            var b = new CryptoCoinBuilder();
-                        var c = b.AddCoin(CoinsE.BTC).AddHashRate(cryptoCoinPrimitives.HashRate).Build();
-            Assert.Equal(c.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
-            Assert.Equal(c.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
+            var a = CryptoCoinBuilder.CreateNew()
+                        .AddCoin(CoinsE.BTC)
+                        .AddHashRate(cryptoCoinPrimitives.HashRate)
+                        .Build();
+            Assert.Equal(a.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
+            Assert.Equal(a.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
         }
         [Fact]
         void NumCoinsCreated()
@@ -119,9 +121,14 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
             //    //CryptoNoteCoinStats cncs = new CryptoNoteCoinStats(Coins.XMR)
             //    Assert.NotNull(_avgNumCCoinsCreated);
             //}
-
-
         }
+
+        //[Fact]
+        //[ExpectedException(typeof(System.ArgumentException))]
+        //public void GetDifficultyFromAPIThrowsArgumentExceptionOnIsNullOrWhiteSpace()
+        //{
+        //    CryptoCoinDifficulty D = new CryptoCoinDifficulty("XMR", "");
+        //}
     }
 
-    }
+}

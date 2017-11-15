@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using static ATAP.CryptoCurrency.ExtensionHelpers;
+using ATAP.DateTimeUtilities;
 namespace ATAP.CryptoCurrency {
     public enum Proofs {
         //[LocalizedDescription("Work", typeof(Resource))]
@@ -66,40 +67,6 @@ namespace ATAP.CryptoCurrency {
         [Description("ZCoin")]
         ZEC
     }
-    public class DTSandSpan {
-        TimeSpan dateTimeSpan;
-        DateTime dts;
-        public DTSandSpan(DateTime dts, TimeSpan dateTimeSpan)
-        {
-            this.dts = dts;
-            this.dateTimeSpan = dateTimeSpan;
-        }
-        public TimeSpan DateTimeSpan { get => dateTimeSpan; set => dateTimeSpan = value; }
-        public DateTime Dts { get => dts; set => dts = value; }
-    }
-    public class Fees {
-        double feeAsAPercent;
-        public Fees(double feeAsAPercent)
-        {
-            this.feeAsAPercent = feeAsAPercent;
-        }
-        public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
-    }
-
-    public class HashRate {
-        double hashRatePerTimeSpan;
-        TimeSpan hashRateSpan;
-        int hashRateUOM;
-        public HashRate(double hashRatePerTimeSpan, int uom, TimeSpan hashRateSpan)
-        {
-            this.hashRatePerTimeSpan = hashRatePerTimeSpan;
-            hashRateUOM = uom;
-            this.hashRateSpan = hashRateSpan;
-        }
-        public double HashRatePerTimeSpan { get { return hashRatePerTimeSpan; } set { hashRatePerTimeSpan = value; } }
-        public TimeSpan HashRateSpan { get { return hashRateSpan; } set { hashRateSpan = value; } }
-        public int HashRateUOM { get => hashRateUOM; set => hashRateUOM = value; }
-    }
     public class BlockReward {
         double blockRewardPerBlock;
         public BlockReward(double blockRewardPerBlock)
@@ -108,26 +75,6 @@ namespace ATAP.CryptoCurrency {
         }
         public double BlockRewardPerBlock { get { return blockRewardPerBlock; } set { blockRewardPerBlock = value; } }
     }
-    public interface IBlockReward {
-        double BlockRewardPerBlock { get; set; }
-    }
-    public interface IHashRates {
-        Dictionary<CoinsE, List<HashRate>> HashRates { get; set; }
-    }
-    public interface ICryptoCoinE {
-        CoinsE Coin { get; set; }
-    }
-    public interface IDTSandSpan {
-        DTSandSpan DTSandSpan { get; set; }
-    }
-    public interface IHashRate {
-        HashRate HashRate { get; set; }
-    }
-    public interface IAvgBlockTime {
-        TimeSpan AvgBlockTime { get; set; }
-    }
-    public interface ICryptoCoin : ICryptoCoinE, IDTSandSpan, IHashRate, IAvgBlockTime {
-        }
     public partial class CryptoCoin : ICryptoCoin
     {
         TimeSpan avgBlockTime;
@@ -154,13 +101,23 @@ namespace ATAP.CryptoCurrency {
         public DTSandSpan DTSandSpan { get => dTSandSpan; set => dTSandSpan = value; }
         public HashRate HashRate { get => hashRate; set => hashRate = value; }
     }
-    public class CryptoCoinBuilder {
+
+    public interface ICryptoCoinBuilder
+    {
+        CryptoCoin Build();
+    }
+
+    public class CryptoCoinBuilder  {
         TimeSpan avgBlockTime;
         double blockRewardPerBlock;
         CoinsE coin;
         DTSandSpan dTSandSpan;
         HashRate hashRate;
         public CryptoCoinBuilder() { }
+        public static CryptoCoinBuilder CreateNew()
+        {
+            return new CryptoCoinBuilder();
+        }
         public CryptoCoinBuilder AddAvgBlockTime(TimeSpan avgBlockTime)
         {
             this.avgBlockTime = avgBlockTime;
@@ -176,14 +133,14 @@ namespace ATAP.CryptoCurrency {
             this.coin = coin;
             return this;
         }
-        public CryptoCoinBuilder AddDTSAndSpan(DTSandSpan dtss)
+        public CryptoCoinBuilder AddDTSAndSpan(DTSandSpan dTSandSpan)
         {
-            dTSandSpan = dtss;
+            this.dTSandSpan = dTSandSpan;
             return this;
         }
-        public CryptoCoinBuilder AddHashRate(HashRate hr)
+        public CryptoCoinBuilder AddHashRate(HashRate hashRate)
         {
-            hashRate = hr;
+            this.hashRate = hashRate;
             return this;
         }
         public CryptoCoin Build()
@@ -201,13 +158,7 @@ namespace ATAP.CryptoCurrency {
 //            //Hashrate = hashrate == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(hashrate)) : hashrate;
 //        // provides an estimate of the probability
 
-    //    public class CoinStatsXMR : CoinStatsCryptoNote
-//    {
-//        public CoinStatsXMR(CoinsE coin, DateTime dts, TimeSpan dateTimeSpan, TimeSpan avgblocktime, decimal networkhashrate, decimal blockreward, decimal difficulty) : base(coin, dts, dateTimeSpan, avgblocktime, networkhashrate, blockreward, difficulty) { }
-//        //public CoinStatsXMR(IHTTPClientGetter getter, IGetterArgsHTTPClient getterargs)
-//        //{
-//        //    CoinStatsCryptoNote cs = getter.get(getterargs);
-//        //}
+
 //    }
 //public class CryptoCoinDifficulty
 //{

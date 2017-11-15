@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DateTimeUtilities\DateTimeUtilities.csproj" />
     <ProjectReference Include="..\WebGet\WebGet.csproj" />
   </ItemGroup>
 

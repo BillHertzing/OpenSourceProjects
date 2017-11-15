@@ -7,13 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="3.51.0" />
+    <PackageReference Include="GenFu" Version="1.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="Moq" Version="4.7.145" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DateTimeUtilities\DateTimeUtilities.csproj" />
     <ProjectReference Include="..\Get-HashrateToCoin\CryptoCoins.csproj" />
+    <ProjectReference Include="..\UnitTestUtilities\UnitTestUtilities.csproj" />
   </ItemGroup>
 
 </Project>

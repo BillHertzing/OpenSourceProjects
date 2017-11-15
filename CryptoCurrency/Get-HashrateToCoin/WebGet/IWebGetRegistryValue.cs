@@ -9,6 +9,6 @@ namespace ATAP.WebGet
     {
         Policy Pol { get; set; }
         HttpRequestMessage Req { get; set; }
-        WebGetHttpResponseCharacteristics Rsp { get; set; }
+        WebGetHttpResponseHowToHandle Rsp { get; set; }
     }
 }

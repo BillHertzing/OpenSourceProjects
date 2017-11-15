@@ -10,8 +10,8 @@ namespace ATAP.WebGet
     {
         Policy pol;
         HttpRequestMessage req;
-        WebGetHttpResponseCharacteristics rsp;
-        public WebGetRegistryValue(Policy pol, HttpRequestMessage req, WebGetHttpResponseCharacteristics rsp)
+        WebGetHttpResponseHowToHandle rsp;
+        public WebGetRegistryValue(Policy pol, HttpRequestMessage req, WebGetHttpResponseHowToHandle rsp)
         {
             this.pol = pol;
             this.req = req;
@@ -25,7 +25,7 @@ namespace ATAP.WebGet
         //}
         public Policy Pol { get => pol; set => pol = value; }
         public HttpRequestMessage Req { get => req; set => req = value; }
-        public WebGetHttpResponseCharacteristics Rsp { get => rsp; set => rsp = value; }
+        public WebGetHttpResponseHowToHandle Rsp { get => rsp; set => rsp = value; }
 
         //public ICloneable();
     }
@@ -35,34 +35,35 @@ public interface IWebGetRegistryValueBuilder
 {
     WebGetRegistryValue Build();
 }
-public class WebGetRegistryValueBuilder : IWebGetRegistryValueBuilder
+public class WebGetRegistryValueBuilder
 {
     Policy pol;
     HttpRequestMessage req;
-    WebGetHttpResponseCharacteristics rsp;
+    WebGetHttpResponseHowToHandle rsp;
     public WebGetRegistryValueBuilder()
     {
     }
-    public IWebGetRegistryValueBuilder AddPolicy(Policy pol)
-    {
-        this.pol = pol;
-        return this;
-    }
-    public IWebGetRegistryValueBuilder AddRequest(HttpRequestMessage req)
+
+    public WebGetRegistryValueBuilder AddRequest(HttpRequestMessage req)
     {
         this.req = req;
         return this;
     }
-    public IWebGetRegistryValueBuilder AddResponse(WebGetHttpResponseCharacteristics rsp)
+    public WebGetRegistryValueBuilder AddResponse(WebGetHttpResponseHowToHandle rsp)
     {
         this.rsp = rsp;
+        return this;
+    }
+    public WebGetRegistryValueBuilder AddPolicy(Policy pol)
+    {
+        this.pol = pol;
         return this;
     }
     public WebGetRegistryValue Build()
     {
         return new WebGetRegistryValue(pol, req, rsp);
     }
-    public static IWebGetRegistryValueBuilder CreateNew()
+    public static WebGetRegistryValueBuilder CreateNew()
     {
         return new WebGetRegistryValueBuilder();
     }

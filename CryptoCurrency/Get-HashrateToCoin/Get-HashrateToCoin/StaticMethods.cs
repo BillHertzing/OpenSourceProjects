@@ -122,14 +122,14 @@ namespace ATAP.CryptoCurrency
         }
             public static double AverageShareOfBlockRewardPerNetworkHashRateSpanFast(AverageShareOfBlockRewardDT data)
         {
-            // normalize into nmhr the MinerHashRate to the same uom and span as the NetworkHashRate
-            HashRate nmhr = NormalizeHashRateFast(data.MinerHashRate, data.NetworkHashRate);
-            double HashRateAsAPercentOfTotal = nmhr.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan;
+            // normalize into normalizedMinerHashRate the MinerHashRate to the same uom and span as the NetworkHashRate
+            HashRate normalizedMinerHashRate = NormalizeHashRateFast(data.MinerHashRate, data.NetworkHashRate);
+            double HashRateAsAPercentOfTotal = normalizedMinerHashRate.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan;
             // normalize the BlockRewardPerSpan to the same span the network HashRate span
             double normalizedBlockCreationSpan = data.AverageBlockCreationSpan.TotalMilliseconds / data.NetworkHashRate.HashRateSpan.TotalMilliseconds;
             double normalizedBlockRewardPerSpan = data.BlockRewardPerBlock / (data.AverageBlockCreationSpan.TotalMilliseconds * normalizedBlockCreationSpan);
             // The number of block rewards found, on average, within a given TimeSpan, is number of blocks in the span, times the fraction of the NetworkHashRate contributed by the miner
-            return  normalizedBlockRewardPerSpan *(nmhr.HashRatePerTimeSpan/data.NetworkHashRate.HashRatePerTimeSpan) ;
+            return  normalizedBlockRewardPerSpan *(normalizedMinerHashRate.HashRatePerTimeSpan/data.NetworkHashRate.HashRatePerTimeSpan) ;
             
         }
     }

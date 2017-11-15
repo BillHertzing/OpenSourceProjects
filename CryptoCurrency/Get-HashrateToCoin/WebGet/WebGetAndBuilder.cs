@@ -5,9 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Polly;
-using Polly.Bulkhead;
 using Polly.Registry;
-using Polly.Retry;
 using Polly.Timeout;
 namespace ATAP.WebGet {
     // Within an application, there should only be one static instance of a HTPClient. This class provides that, and a set of static async tasks to interact with it.
@@ -19,62 +17,94 @@ namespace ATAP.WebGet {
         List<HttpStatusCode> httpStatusCodesWorthRetrying;
         PolicyRegistry policyRegistry;
         WebGetRegistry webGetRegistry;
-        
         WebGet()
         {
             httpClient = new HttpClient();
             policyRegistry = new PolicyRegistry();
-            httpStatusCodesWorthRetrying = new List<HttpStatusCode> {
-                HttpStatusCode.RequestTimeout, // 408
-                 HttpStatusCode.InternalServerError, // 500
-                 HttpStatusCode.BadGateway, // 502
-                 HttpStatusCode.ServiceUnavailable, // 503
-                 HttpStatusCode.GatewayTimeout // 504
-                 };
 
+            httpStatusCodesWorthRetrying = new List<HttpStatusCode> { HttpStatusCode.RequestTimeout, // 408
+ HttpStatusCode.InternalServerError, // 500
+ HttpStatusCode.BadGateway, // 502
+ HttpStatusCode.ServiceUnavailable, // 503
+ HttpStatusCode.GatewayTimeout // 504
+ };
             TimeoutPolicy policyTimeout30Seconds = Policy.TimeoutAsync(new TimeSpan(0, 0, 30), TimeoutStrategy.Optimistic);
             // ToDo, add a BulkheadPolicy that pairs with an action to run if the bulkhead rejects and the queue is full
-            BulkheadPolicy policyBulkhead50Q150 = Policy.BulkheadAsync(50, 150);
-            policyRegistry.Add("policyBulkhead50Q150", policyBulkhead50Q150);
-            policyRegistry.Add("policyTimeout30Seconds", policyTimeout30Seconds);
-            policyRegistry.Add("policyWaitAndRetry3TimesOnResponseContainsHttpStatusCodesWorthRetrying", Policy.HandleResult<HttpResponseMessage>(r => httpStatusCodesWorthRetrying.Contains(r.StatusCode)).WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt)));
-            policyRegistry.Add("policyWaitAndRetry3TimesOnRequestException",  Policy.Handle<HttpRequestException>().WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt)));
+            policyRegistry.Add("policyBulkhead50Q150", Policy.BulkheadAsync(50, 150));
+            policyRegistry.Add("policyTimeout30Seconds", Policy.TimeoutAsync(new TimeSpan(0, 0, 30), TimeoutStrategy.Optimistic));
+            policyRegistry.Add("policyWaitAndRetry3TimesOnResponseContainsHttpStatusCodesWorthRetrying", Policy.HandleResult<HttpResponseMessage>(r => httpStatusCodesWorthRetrying.Contains(r.StatusCode))
+                                                                                                             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt)));
+            policyRegistry.Add("policyWaitAndRetry3TimesOnRequestException", Policy.Handle<HttpRequestException>()
+                                                                                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt)));
 
             // PolicyWrap policyFullyResilient = Policy.Wrap(fallback, cache, retry, breaker, bulkhead, timeout);
 
-            // 
+
             webGetRegistry = new WebGetRegistry();
+
+
 
         }
         public async Task<T> ASyncWebGetFast<T>(WebGetRegistryKey reqID)
         {
             WebGetRegistryValue registryValue = webGetRegistry[reqID];
             Policy p = registryValue.Pol;
-            httpClient = new HttpClient();
-            //Type typeToReturn = registryValue.Rsp.
 
-            return await p.ExecuteAsync<T>(async () => {
-                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(registryValue.Req);
-                var x= httpResponseMessage.AsType<T>();
-                return x;
+
+            return await p.ExecuteAsync<T>(async() => {
+                HttpRequestMessage httpRequestMessageInner = HttpRequestMessageBuilder.CreateNew()
+                                                 .AddMethod(registryValue.Req.Method)
+                                                 .AddRequestUri(registryValue.Req.RequestUri)
+                                                 // .AddHeaders(registryValue.Req.Headers);
+                                                 .Build();
+                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessageInner);
+               
+                return httpResponseMessage.AsType<T>(); });
+        }
+        public  Task<T> WebGetFast<T>(WebGetRegistryKey reqID)
+        {
+            WebGetRegistryValue registryValue = webGetRegistry[reqID];
+            Policy p = registryValue.Pol;
+
+
+            return  p.ExecuteAsync<T>(async () => {
+                HttpRequestMessage httpRequestMessageInner = HttpRequestMessageBuilder.CreateNew()
+                                                 .AddMethod(registryValue.Req.Method)
+                                                 .AddRequestUri(registryValue.Req.RequestUri)
+                                                 // .AddHeaders(registryValue.Req.Headers);
+                                                 .Build();
+                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessageInner);
+                // the .AsType helper includes .Result, which turns this into a synchronous operation
+                return httpResponseMessage.AsType<T>();
             });
-
         }
         public async Task<string> ASyncWebGetFast(WebGetRegistryKey reqID)
         {
             WebGetRegistryValue registryValue = webGetRegistry[reqID];
             Policy p = registryValue.Pol;
-            return await p.ExecuteAsync(async () =>
-            {
-                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(registryValue.Req);
-                HttpContent httpContent = httpResponseMessage.Content;
-                var str = httpContent.ReadAsStringAsync().Result;
-                return str;
+            HttpRequestMessage httpRequestMessageInner = HttpRequestMessageBuilder.CreateNew()
+                                                             .AddMethod(registryValue.Req.Method)
+                                                             .AddRequestUri(registryValue.Req.RequestUri)
+                                                             // .AddHeaders(registryValue.Req.Headers);
+                                                             .Build();
+            return await p.ExecuteAsync(async() => { HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessageInner);
+                return httpResponseMessage.AsString(); });
+        }
+        public async Task<string> ASyncWebGetFast(Policy p, HttpRequestMessage httpRequestMessage)
+        {
+            return await p.ExecuteAsync(async () => {
+                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
+                return httpResponseMessage.AsString();
             });
         }
         public Task<T> AsyncWebGetSafe<T>(WebGetRegistryKey reqID)
         {
             throw new NotImplementedException("'AsyncWebGetSafe<T> not yet implemented");
+        //if (string.IsNullOrWhiteSpace(requestUri))
+        //{
+        //    //ToDo: Better error handling on the throw
+        //    throw new ArgumentException("message", nameof(requestUri));
+        //}
         // ToDo Add validation tests
         // ToDo does the dictionary contain this key
         //return ASyncWebGetFast<T>(reqID);
@@ -88,6 +118,8 @@ namespace ATAP.WebGet {
         string acceptHeader;
         string bearerToken;
         HttpContent content;
+        // The HttpRequestHeaders are a System.Collections.Specialized.NameValueCollection() with a ADD(string,string) method
+        HttpRequestHeaders httpRequestHeaders;
         HttpMethod method;
         Uri requestUri;
         public HttpRequestMessageBuilder()
@@ -108,6 +140,13 @@ namespace ATAP.WebGet {
             this.content = content;
             return this;
         }
+        // Figure out some way to replace all of the headers with a new 
+        //public HttpRequestMessageBuilder AddHeaders(HttpRequestMessage httpRequestMessage)
+        //{
+        //    foreach(var h in httpRequestMessage.Headers) { switch(h.Key) { defaulthttpRequestHeaders[h.Key] = h.Value; break; } }
+        //    httpRequestHeaders = httpRequestHeaders;
+        //    return this;
+        //}
         public HttpRequestMessageBuilder AddMethod(HttpMethod method)
         {
             this.method = method;
@@ -122,6 +161,8 @@ namespace ATAP.WebGet {
         {
             HttpRequestMessage hrm = new HttpRequestMessage(method, requestUri);
             if(content != default(HttpContent)) { hrm.Content = content; };
+            // ToDo Figure out how to replace the entire HttpRequestHeaders
+            // if (httpRequestHeaders != default(HttpRequestHeaders) { hrm.Headers = httpRequestHeaders; }
             if(bearerToken != default(string)) { hrm.Headers.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken); };
             //ToDo: further research, is .Headers.Accept.Clear() needed on a newly created HttpRequestMessage?
             hrm.Headers.Accept.Clear();
