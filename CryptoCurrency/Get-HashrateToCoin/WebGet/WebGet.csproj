@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Polly" Version="5.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Polly" Version="5.5.0" />
+    <PackageReference Include="ValueUtils" Version="1.4.0" />
   </ItemGroup>
 
 </Project>

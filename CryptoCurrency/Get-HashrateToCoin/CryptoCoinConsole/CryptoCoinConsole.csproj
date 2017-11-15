@@ -5,8 +5,18 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Multi-Currency-Money" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DateTimeUtilities\DateTimeUtilities.csproj" />
     <ProjectReference Include="..\Get-HashrateToCoin\CryptoCoins.csproj" />
+    <ProjectReference Include="..\WebGet\WebGet.csproj" />
   </ItemGroup>
 
 </Project>

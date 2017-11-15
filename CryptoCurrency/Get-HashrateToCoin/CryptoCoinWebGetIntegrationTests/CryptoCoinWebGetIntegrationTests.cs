@@ -37,24 +37,10 @@ namespace ATAP.CryptoCoinWebGetIntegrationTests {
         {
             this.fixturePrimitives = fixturePrimitives;
         }
-        [Fact]
-        public void GetNetworkHashRateForBTCHashRate()
-        {
-            // the WebOps Registry entry
-            // there are more than one  WEB APIs that return this information for each coin
-            // select one of the web apis to use for this (sorted based on ?? cache availability??
-            // for this test, create the WebGetRegistryEntry
-            fixturePrimitives.webGet.WebGetRegistry = new WebGetRegistry() { { fixturePrimitives.webGetRegistryKeyForBTCHashRate, fixturePrimitives.webGetRegistryValueForBTCHashRate } };
-            var task = fixturePrimitives.webGet.ASyncWebGetFast<chain_so_api_v2_get_info>(fixturePrimitives.webGetRegistryKeyForBTCHashRate);
-            var result = task.Result;
-            ///ToDo: Use TryParse to better handle exceptions??
-            double hashratevalue = Double.Parse(result.data.hashrate);
-            Assert.InRange(hashratevalue, 1000000000000000000.0, 20000000000000000000.0);
-        }
         [Theory]
         [InlineData(CoinsE.ETH, 1000000000000000000.0, 20000000000000000000.0)]
         [InlineData (CoinsE.BTC, 100000000000000000.0, 20000000000000000000.0)]
-        public void GetNetworkHashRateForCoins(CoinsE coin, double lowerbound, double upperbound)
+        public void GetNetworkHashRateValueForCoins(CoinsE coin, double lowerbound, double upperbound)
         {
             WebGetRegistryKey webGetRegistryKey = new WebGetRegistryKey(coin.ToString());
             fixturePrimitives.webGet.WebGetRegistry = new WebGetRegistry() {
