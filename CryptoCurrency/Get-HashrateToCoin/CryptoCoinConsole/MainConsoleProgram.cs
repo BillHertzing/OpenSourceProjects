@@ -202,7 +202,7 @@ namespace CryptoCoinConsole {
                                 }
 
                                 // Clear the dictionaries, bag, and list, cancelling then discarding any tasks that are in train.
-                                // Todo: write the function that does this
+                                // ToDo: write the function that does this
 
                                 // Read the miner farm's configuration into a List of Tuples
                                 var rigConfigs = emitMinerConfigs(minerFarmConfigurationsFileFromOutside);

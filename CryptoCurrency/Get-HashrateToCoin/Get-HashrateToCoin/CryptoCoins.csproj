@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="UnitsNet" Version="3.78.0" />
   </ItemGroup>
 
   <ItemGroup>

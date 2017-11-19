@@ -103,35 +103,8 @@ namespace ATAP.CryptoCurrency
 
     public partial class CryptoCoin
     {
-        public static HashRate NormalizeHashRateSafe(HashRate fromHashRate, HashRate toHashRate) {
-            // ToDo: Add tests to ensure the UOM is neither null nor zero
-            // ToDo: Add tests to ensure the Span is neither null nor zero
-            return NormalizeHashRateFast(fromHashRate, toHashRate);
-           }
-        public static HashRate NormalizeHashRateFast(HashRate fromHashRate, HashRate toHashRate)
-        {
-            // no parameter checking
-            double normalizedUOM = fromHashRate.HashRateUOM / toHashRate.HashRateUOM;
-            double normalizedTimeSpan = (fromHashRate.HashRateSpan).TotalMilliseconds / (toHashRate.HashRateSpan).TotalMilliseconds;
-            return new HashRate((fromHashRate.HashRatePerTimeSpan * normalizedUOM / normalizedTimeSpan), toHashRate.HashRateUOM, toHashRate.HashRateSpan);
-        }
-        public static double AverageShareOfBlockRewardPerNetworkHashRateSpanSafe(AverageShareOfBlockRewardDT data)
-        {
-            // ToDo: Add parameter checking
-                return AverageShareOfBlockRewardPerNetworkHashRateSpanFast(data);
-        }
-            public static double AverageShareOfBlockRewardPerNetworkHashRateSpanFast(AverageShareOfBlockRewardDT data)
-        {
-            // normalize into normalizedMinerHashRate the MinerHashRate to the same uom and span as the NetworkHashRate
-            HashRate normalizedMinerHashRate = NormalizeHashRateFast(data.MinerHashRate, data.NetworkHashRate);
-            double HashRateAsAPercentOfTotal = normalizedMinerHashRate.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan;
-            // normalize the BlockRewardPerSpan to the same span the network HashRate span
-            double normalizedBlockCreationSpan = data.AverageBlockCreationSpan.TotalMilliseconds / data.NetworkHashRate.HashRateSpan.TotalMilliseconds;
-            double normalizedBlockRewardPerSpan = data.BlockRewardPerBlock / (data.AverageBlockCreationSpan.TotalMilliseconds * normalizedBlockCreationSpan);
-            // The number of block rewards found, on average, within a given TimeSpan, is number of blocks in the span, times the fraction of the NetworkHashRate contributed by the miner
-            return  normalizedBlockRewardPerSpan *(normalizedMinerHashRate.HashRatePerTimeSpan/data.NetworkHashRate.HashRatePerTimeSpan) ;
-            
-        }
+
+        
     }
     //public class FromJSON1
     //{

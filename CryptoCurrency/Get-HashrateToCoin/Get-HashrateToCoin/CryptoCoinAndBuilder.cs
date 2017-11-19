@@ -111,17 +111,23 @@ namespace ATAP.CryptoCurrency
 
         public static double AverageShareOfBlockRewardPerNetworkHashRateSpanFast(AverageShareOfBlockRewardDT data)
         {
-            // normalize into normalizedMinerHashRate the MinerHashRate to the same TimeSpan as the NetworkHashRate
-
-            HashRate normalizedMinerHashRate = HashRate.ChangeTimeSpan(data.MinerHashRate, data.NetworkHashRate);
-            double HashRateAsAPercentOfTotal = normalizedMinerHashRate.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan;
+            // normalize into minerHashRateAsAPercentOfTotal the MinerHashRate / NetworkHashRate using the TimeSpan of the Miner
+            HashRate minerHashRateAsAPercentOfTotal = data.MinerHashRate / data.NetworkHashRate;
+            // normalize the BlockRewardPerSpan to the same span the Miner HashRate span
+            //ToDo Fix this calculation
             // normalize the BlockRewardPerSpan to the same span the network HashRate span
             double normalizedBlockCreationSpan = data.AverageBlockCreationSpan.TotalMilliseconds / data.NetworkHashRate.HashRateTimeSpan.TotalMilliseconds;
             double normalizedBlockRewardPerSpan = data.BlockRewardPerBlock / (data.AverageBlockCreationSpan.TotalMilliseconds * normalizedBlockCreationSpan);
             // The number of block rewards found, on average, within a given TimeSpan, is number of blocks in the span, times the fraction of the NetworkHashRate contributed by the miner
-            return normalizedBlockRewardPerSpan * (normalizedMinerHashRate.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan);
+            return normalizedBlockRewardPerSpan * (minerHashRateAsAPercentOfTotal.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan);
 
         }
+        public static double AverageShareOfBlockRewardPerNetworkHashRateSpanSafe(AverageShareOfBlockRewardDT data)
+        {
+            // ToDo: Add parameter checking
+            return AverageShareOfBlockRewardPerNetworkHashRateSpanFast(data);
+        }
+
     }
 
     public interface ICryptoCoinBuilder
