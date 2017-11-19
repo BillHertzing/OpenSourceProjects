@@ -73,6 +73,34 @@ namespace CryptoCoinConsole {
                 // Information that originates outside of the lifetime of the program (command line arguments, environment variables, config files, registry settings)
                 // Name of file with the MinerFarm Configuration information
                 var minerFarmConfigurationsFileFromOutside = @"C:\Dropbox\whertzing\CryptoCurrency\MyMiningfarm.json";
+                // Define a method that will read a file of miner configurations and return a list of Tuples
+                // ToDo: handle cancellation while reading/posting the miner configurations
+                List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>> readMinerConfigurationsFileToList(string minerFarmConfigurationsFile)
+                {
+                    List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>> _rigConfigs = new List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>>();
+                    var fs = new FileStream(minerFarmConfigurationsFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    Dictionary<string, Dictionary<string, MinerConfig>> minerFarm;
+                    using (var streamReader = new StreamReader(fs))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        minerFarm = (Dictionary<string, Dictionary<string, MinerConfig>>)serializer.Deserialize(streamReader, typeof(Dictionary<string, Dictionary<string, MinerConfig>>));
+                    }
+                    //ToDo: rewrite as LINQ
+                    foreach (var minerRigID in minerFarm.Keys)
+                    {
+                        foreach (var minerConfigID in minerFarm[minerRigID].Keys)
+                        {
+                            var minerConfig = minerFarm[minerRigID][minerConfigID];
+                            var powerConsumption = minerConfig.PowerConsumption;
+                            var fees = minerConfig.Fees;
+                            _rigConfigs.Add(new Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>(minerRigID, minerConfigID, powerConsumption, fees, minerConfig.HashRates));
+                            //Tuple<MiningRigIDT, MinerConfigIDT, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>> o = new Tuple<MiningRigIDT, MinerConfigIDT, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>(minerRigID, minerConfigID, powerConsumption, fees, minerConfig.HashRates);
+                        }
+                    }
+                    return _rigConfigs;
+                }
+
+
                 // cost of power
 
                 // Create a CancellationTokenSource
@@ -125,21 +153,9 @@ namespace CryptoCoinConsole {
 
                                 // query to get all of the coins in all of the Rigs in all MinerConfigs and print them to the console
                                 minerFarm.Values.SelectMany(rig => rig.Values.SelectMany(cfg => cfg.HashRates.Keys)).ToList().ForEach((coin)=>
-                                    { Console.WriteLine($"Coin {coin}.ToString()"); }
+                                    { Console.WriteLine($"Coin {coin.ToString()}"); }
                                     );
 
-                                /*
-                                List < CoinsE > allCoinsList = new List<CoinsE> { CoinsE.BTC };// minerFarm.Values.FindAll(r => (1==1));
-                                                                                            //[miningRigID][minerConfigID1].HashRates.Keys.ToList()
-                                                                                            //              .Union(farm[0][miningRigID][minerConfigID2].HashRates.Keys.ToList());
-
-
-                                foreach (var coin in allCoinsList)
-                                {
-                                    //ToDo Localization
-                                    Console.WriteLine($"Coin {coin}.ToString()");
-                                }
-                                */
                                 //ToDo: make averageShareOfBlockRewardDT a console choice
                                 //var averageShareOfBlockRewardDT = new AverageShareOfBlockRewardDT(new TimeSpan(0, 0, 1), new TimeSpan(0, 0, 1), mr01.Miners().HashRate, cc.HashRate, cc.BlockRewardPerBlock)
                                 //ToDo: make numCoins a console choice
@@ -178,41 +194,12 @@ namespace CryptoCoinConsole {
                         case 3:
                             {
 
-                                // Define a method that will read a file of miner configurations and return a list of Tuples
-                                // ToDo: handle cancellation while reading/posting the miner configurations
-                                List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>> emitMinerConfigs(string minerFarmConfigurationsFile)
-                                {
-                                    List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>> _rigConfigs = new List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>>();
-                                    var fs = new FileStream(minerFarmConfigurationsFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                                    Dictionary<string, Dictionary<string, MinerConfig>> minerFarm;
-                                    using (var streamReader = new StreamReader(fs))
-                                    {
-                                        JsonSerializer serializer = new JsonSerializer();
-                                        minerFarm = (Dictionary<string, Dictionary<string, MinerConfig>>)serializer.Deserialize(streamReader, typeof(Dictionary<string, Dictionary<string, MinerConfig>>));
-                                    }
-
-
-                                    //ToDo: rewrite as LINQ
-                                    foreach (var minerRigID in minerFarm.Keys)
-                                    {
-                                        foreach (var minerConfigID in minerFarm[minerRigID].Keys)
-                                        {
-                                            var minerConfig = minerFarm[minerRigID][minerConfigID];
-                                            var powerConsumption = minerConfig.PowerConsumption;
-                                            var fees = minerConfig.Fees;
-                                            _rigConfigs.Add(new Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>(minerRigID, minerConfigID, powerConsumption, fees, minerConfig.HashRates));
-                                            //Tuple<MiningRigIDT, MinerConfigIDT, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>> o = new Tuple<MiningRigIDT, MinerConfigIDT, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>(minerRigID, minerConfigID, powerConsumption, fees, minerConfig.HashRates);
-                                            //target.SendASync(new Tuple<MiningRigIDT, MinerConfigIDT, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>(minerRigID, minerConfigID, powerConsumption, fees, minerConfig.HashRates));
-                                        }
-                                    }
-                                    return _rigConfigs;
-                                }
 
                                 // Clear the dictionaries, bag, and list, cancelling then discarding any tasks that are in train.
                                 // ToDo: write the function that does this
 
                                 // Read the miner farm's configuration into a List of Tuples
-                                var rigConfigs = emitMinerConfigs(minerFarmConfigurationsFileFromOutside);
+                                var rigConfigs = readMinerConfigurationsFileToList(minerFarmConfigurationsFileFromOutside);
 
                                 // This method attempts to use interlocking tasks to populate the three ConcurrentDictionary items
                                 void useInterlockingTasksToPopulateModel(List<Tuple<string, string, PowerConsumption, Fees, Dictionary<CoinsE, HashRate>>> inList)
@@ -462,7 +449,7 @@ namespace CryptoCoinConsole {
 
 
                                         // Create the completion tasks
-                                        emitMinerConfigs.Completion.ContinueWith(t =>
+                                        readMinerConfigurationsFileToList.Completion.ContinueWith(t =>
                                         {
                                             if (t.IsFaulted)
                                             {
@@ -477,11 +464,11 @@ namespace CryptoCoinConsole {
                                         foreach (var inData in inList)
                                         {
                                             // Start the producer process
-                                            emitMinerConfigs.SendAsync(inData);
+                                            readMinerConfigurationsFileToList.SendAsync(inData);
 
                                         }
                                         // Mark the producer as complete
-                                        emitMinerConfigs.Complete();
+                                        readMinerConfigurationsFileToList.Complete();
 
                                         // Wait for the final consumer bl0ock to complete (or not, to keep the main thread responsive)
                                         updateProfitability.Completion.Wait();

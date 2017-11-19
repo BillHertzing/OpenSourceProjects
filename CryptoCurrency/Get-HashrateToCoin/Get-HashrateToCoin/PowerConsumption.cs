@@ -7,21 +7,21 @@ namespace ATAP.CryptoCurrency
 {
     public class PowerConsumption
     {
-        Power w;
+        double watts;
         TimeSpan period;
         public PowerConsumption()
         {
-            this.w = default(Power);
+            this.watts = default(double);
             this.period = default(TimeSpan);
         }
-        public PowerConsumption(Power w, TimeSpan period)
+        public PowerConsumption(double w, TimeSpan period)
         {
-            this.w = w;
+            this.watts = w;
             this.period = period;
         }
-        public Power W { get => w; set => w = value; }
+        public double Watts { get => watts; set => watts = value; }
         public TimeSpan Period { get => period; set => period = value; }
-        public override string ToString() { return $"{this.w}-{this.period}"; }
+        public override string ToString() { return $"{this.watts}-{this.period}"; }
     }
 
     public class PowerConsumptionConverter : ExpandableObjectConverter
@@ -56,11 +56,11 @@ namespace ATAP.CryptoCurrency
 
             if (value is string)
             {
-                Power w;
+                double w;
                 TimeSpan period;
                 //ToDo better validation on string to be sure it conforms to  "double:TimeSpan"
                 string[] s = ((string)value).Split('-');
-                if (s.Length != 2 || !Power.TryParse(s[0], out w) || !TimeSpan.TryParse(s[1], out period)) throw new ArgumentException("Object is not a string of format double:int", "value");
+                if (s.Length != 2 || !double.TryParse(s[0], out w) || !TimeSpan.TryParse(s[1], out period)) throw new ArgumentException("Object is not a string of format double:int", "value");
                 return new PowerConsumption(w,period);
             }
 

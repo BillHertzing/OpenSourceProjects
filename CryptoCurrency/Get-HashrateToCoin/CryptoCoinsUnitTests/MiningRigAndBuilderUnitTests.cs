@@ -22,7 +22,7 @@ namespace ATAP.CryptoCurrency.MinerRigAndBuilderUnitTests {
         public MinerConfig minerConfig;
         public PowerConsumption powerConsumption;
         public TimeSpan powerConsumptionUOM;
-        public Power powerConsumptionWatts;
+        public double powerConsumptionWatts;
         public TimeSpan powerConsumptionPeriod;
         //ToDo decide to keep or delete MinerConfigIDT public Dictionary<MinerConfigIDT, MinerConfig> minerConfigDict;
         public Dictionary<string, MinerConfig> minerConfigDict;
@@ -42,7 +42,7 @@ namespace ATAP.CryptoCurrency.MinerRigAndBuilderUnitTests {
             hashRate2X = new HashRate(hashRateValue * 2,  hashRatePeriod);
             hashRate1000X = new HashRate(hashRateValue * 1000, hashRatePeriod);
             hashRate2T = new HashRate(hashRateValue,  hashRatePeriod + hashRatePeriod);
-            powerConsumptionWatts = new Power(1000.0);
+            powerConsumptionWatts = 1000.0;
             powerConsumptionPeriod = new TimeSpan(1,0,0);
             powerConsumption = new PowerConsumption(powerConsumptionWatts, powerConsumptionPeriod);
             feeAsAPercent = 1.0;
@@ -71,12 +71,13 @@ namespace ATAP.CryptoCurrency.MinerRigAndBuilderUnitTests {
                             { "claymore-normalclocks-ETHDSH", 
                                 // use the same Miner Config values defined earlier
                                 MinerConfigBuilder.CreateNew()
-                                    .AddPowerConsumption(new PowerConsumption(new UnitsNet.Power(1000), new TimeSpan(1,0,0)))
+                                    .AddPowerConsumption(new PowerConsumption(1000.0, new TimeSpan(1,0,0)))
                                     .AddFees(new Fees(1.0))
                                     .AddHashRates(hashRates)
                                     .Build()
             }}}};
-            tempFileWithMinerRigs = new TemporaryFile();
+            // Serialize the farm into a temporary file
+            tempFileWithMinerRigs = new TemporaryFile(new MemoryStream(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(farm))));
         }
     }
 
