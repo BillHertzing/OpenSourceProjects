@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoCoinConsole", "Crypto
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DateTimeUtilities", "DateTimeUtilities\DateTimeUtilities.csproj", "{56A24260-3077-4ED8-84F8-9B3A70CFDC3B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestUtilities", "UnitTestUtilities\UnitTestUtilities.csproj", "{49D42FE9-3943-4579-A7B4-F2E0EF5E0F8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{56A24260-3077-4ED8-84F8-9B3A70CFDC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A24260-3077-4ED8-84F8-9B3A70CFDC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56A24260-3077-4ED8-84F8-9B3A70CFDC3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49D42FE9-3943-4579-A7B4-F2E0EF5E0F8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49D42FE9-3943-4579-A7B4-F2E0EF5E0F8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49D42FE9-3943-4579-A7B4-F2E0EF5E0F8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49D42FE9-3943-4579-A7B4-F2E0EF5E0F8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
