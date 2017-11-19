@@ -109,7 +109,7 @@ namespace ATAP.CryptoCurrency
         public DTSandSpan DTSandSpan { get => dTSandSpan; set => dTSandSpan = value; }
         public HashRate HashRate { get => hashRate; set => hashRate = value; }
 
-        public static double AverageShareOfBlockRewardPerNetworkHashRateSpanFast(AverageShareOfBlockRewardDT data)
+        public static double AverageShareOfBlockRewardPerSpanFast(AverageShareOfBlockRewardDT data, TimeSpan timeSpan)
         {
             // normalize into minerHashRateAsAPercentOfTotal the MinerHashRate / NetworkHashRate using the TimeSpan of the Miner
             HashRate minerHashRateAsAPercentOfTotal = data.MinerHashRate / data.NetworkHashRate;
@@ -122,10 +122,10 @@ namespace ATAP.CryptoCurrency
             return normalizedBlockRewardPerSpan * (minerHashRateAsAPercentOfTotal.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan);
 
         }
-        public static double AverageShareOfBlockRewardPerNetworkHashRateSpanSafe(AverageShareOfBlockRewardDT data)
+        public static double AverageShareOfBlockRewardPerSpanSafe(AverageShareOfBlockRewardDT data, TimeSpan timeSpan)
         {
             // ToDo: Add parameter checking
-            return AverageShareOfBlockRewardPerNetworkHashRateSpanFast(data);
+            return AverageShareOfBlockRewardPerSpanFast(data, timeSpan);
         }
 
     }
