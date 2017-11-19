@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using static ATAP.CryptoCurrency.ExtensionHelpers;
-namespace ATAP.CryptoCurrency {
-    public enum Proofs {
+using ATAP.DateTimeUtilities;
+namespace ATAP.CryptoCurrency
+{
+    public enum Proofs
+    {
         //[LocalizedDescription("Work", typeof(Resource))]
         [Description("Work")]
         Work,
@@ -19,7 +22,8 @@ namespace ATAP.CryptoCurrency {
     // ToDo: automate the creation of the Algorithm enumeration and its attributes based on ???
     // ToDo: it will require the DLL version created to be part of versioning
     // RoDo: it require any changes be integrated into version control.
-    public enum Algorithms {
+    public enum Algorithms
+    {
         [Description("Casper")]
         Casper,
         [Description("CryptoNote")]
@@ -35,7 +39,8 @@ namespace ATAP.CryptoCurrency {
     // ToDo: it will require the DLL version created to be part of versioning
     // RoDo: it require any changes be integrated into version control.
     // There are over 1500+ different documented coins so far
-    public enum CoinsE {
+    public enum CoinsE
+    {
         [Symbol("BCN")]
         [Description("Bytecoin")]
         [Proof("Work")]
@@ -66,41 +71,8 @@ namespace ATAP.CryptoCurrency {
         [Description("ZCoin")]
         ZEC
     }
-    public class DTSandSpan {
-        TimeSpan dateTimeSpan;
-        DateTime dts;
-        public DTSandSpan(DateTime dts, TimeSpan dateTimeSpan)
-        {
-            this.dts = dts;
-            this.dateTimeSpan = dateTimeSpan;
-        }
-        public TimeSpan DateTimeSpan { get => dateTimeSpan; set => dateTimeSpan = value; }
-        public DateTime Dts { get => dts; set => dts = value; }
-    }
-    public class Fees {
-        double feeAsAPercent;
-        public Fees(double feeAsAPercent)
-        {
-            this.feeAsAPercent = feeAsAPercent;
-        }
-        public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
-    }
-
-    public class HashRate {
-        double hashRatePerTimeSpan;
-        TimeSpan hashRateSpan;
-        int hashRateUOM;
-        public HashRate(double hashRatePerTimeSpan, int uom, TimeSpan hashRateSpan)
-        {
-            this.hashRatePerTimeSpan = hashRatePerTimeSpan;
-            hashRateUOM = uom;
-            this.hashRateSpan = hashRateSpan;
-        }
-        public double HashRatePerTimeSpan { get { return hashRatePerTimeSpan; } set { hashRatePerTimeSpan = value; } }
-        public TimeSpan HashRateSpan { get { return hashRateSpan; } set { hashRateSpan = value; } }
-        public int HashRateUOM { get => hashRateUOM; set => hashRateUOM = value; }
-    }
-    public class BlockReward {
+    public class BlockReward
+    {
         double blockRewardPerBlock;
         public BlockReward(double blockRewardPerBlock)
         {
@@ -108,26 +80,6 @@ namespace ATAP.CryptoCurrency {
         }
         public double BlockRewardPerBlock { get { return blockRewardPerBlock; } set { blockRewardPerBlock = value; } }
     }
-    public interface IBlockReward {
-        double BlockRewardPerBlock { get; set; }
-    }
-    public interface IHashRates {
-        Dictionary<CoinsE, List<HashRate>> HashRates { get; set; }
-    }
-    public interface ICryptoCoinE {
-        CoinsE Coin { get; set; }
-    }
-    public interface IDTSandSpan {
-        DTSandSpan DTSandSpan { get; set; }
-    }
-    public interface IHashRate {
-        HashRate HashRate { get; set; }
-    }
-    public interface IAvgBlockTime {
-        TimeSpan AvgBlockTime { get; set; }
-    }
-    public interface ICryptoCoin : ICryptoCoinE, IDTSandSpan, IHashRate, IAvgBlockTime {
-        }
     public partial class CryptoCoin : ICryptoCoin
     {
         TimeSpan avgBlockTime;
@@ -149,18 +101,46 @@ namespace ATAP.CryptoCurrency {
         }
         public TimeSpan AvgBlockTime { get => avgBlockTime; set => avgBlockTime = value; }
         public double BlockRewardPerBlock { get { return blockRewardPerBlock; } set { blockRewardPerBlock = value; } }
-        public CoinsE Coin { get { return coin; }
-            set { coin = value; } }
+        public CoinsE Coin
+        {
+            get { return coin; }
+            set { coin = value; }
+        }
         public DTSandSpan DTSandSpan { get => dTSandSpan; set => dTSandSpan = value; }
         public HashRate HashRate { get => hashRate; set => hashRate = value; }
+
+        public static double AverageShareOfBlockRewardPerNetworkHashRateSpanFast(AverageShareOfBlockRewardDT data)
+        {
+            // normalize into normalizedMinerHashRate the MinerHashRate to the same TimeSpan as the NetworkHashRate
+
+            HashRate normalizedMinerHashRate = HashRate.ChangeTimeSpan(data.MinerHashRate, data.NetworkHashRate);
+            double HashRateAsAPercentOfTotal = normalizedMinerHashRate.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan;
+            // normalize the BlockRewardPerSpan to the same span the network HashRate span
+            double normalizedBlockCreationSpan = data.AverageBlockCreationSpan.TotalMilliseconds / data.NetworkHashRate.HashRateTimeSpan.TotalMilliseconds;
+            double normalizedBlockRewardPerSpan = data.BlockRewardPerBlock / (data.AverageBlockCreationSpan.TotalMilliseconds * normalizedBlockCreationSpan);
+            // The number of block rewards found, on average, within a given TimeSpan, is number of blocks in the span, times the fraction of the NetworkHashRate contributed by the miner
+            return normalizedBlockRewardPerSpan * (normalizedMinerHashRate.HashRatePerTimeSpan / data.NetworkHashRate.HashRatePerTimeSpan);
+
+        }
     }
-    public class CryptoCoinBuilder {
+
+    public interface ICryptoCoinBuilder
+    {
+        CryptoCoin Build();
+    }
+
+    public class CryptoCoinBuilder
+    {
         TimeSpan avgBlockTime;
         double blockRewardPerBlock;
         CoinsE coin;
         DTSandSpan dTSandSpan;
         HashRate hashRate;
         public CryptoCoinBuilder() { }
+        public static CryptoCoinBuilder CreateNew()
+        {
+            return new CryptoCoinBuilder();
+        }
         public CryptoCoinBuilder AddAvgBlockTime(TimeSpan avgBlockTime)
         {
             this.avgBlockTime = avgBlockTime;
@@ -176,14 +156,14 @@ namespace ATAP.CryptoCurrency {
             this.coin = coin;
             return this;
         }
-        public CryptoCoinBuilder AddDTSAndSpan(DTSandSpan dtss)
+        public CryptoCoinBuilder AddDTSAndSpan(DTSandSpan dTSandSpan)
         {
-            dTSandSpan = dtss;
+            this.dTSandSpan = dTSandSpan;
             return this;
         }
-        public CryptoCoinBuilder AddHashRate(HashRate hr)
+        public CryptoCoinBuilder AddHashRate(HashRate hashRate)
         {
-            hashRate = hr;
+            this.hashRate = hashRate;
             return this;
         }
         public CryptoCoin Build()
@@ -191,51 +171,45 @@ namespace ATAP.CryptoCurrency {
             return new CryptoCoin(coin, dTSandSpan, hashRate, avgBlockTime, blockRewardPerBlock);
         }
     }
-//public class CryptoCoins
-//{
-//
-//            //Coinname = coinname ?? throw new ArgumentNullException(nameof(coinname));
-//            //Avgblocktime = avgblocktime == TimeSpan.Zero ? throw new ArgumentOutOfRangeException(nameof(avgblocktime)) : avgblocktime;
-//            //Networkhashrate = networkhashrate == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(networkhashrate)) : networkhashrate;
-//            //Blockreward = blockreward == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(blockreward)) : blockreward;
-//            //Hashrate = hashrate == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(hashrate)) : hashrate;
-//        // provides an estimate of the probability
+    //public class CryptoCoins
+    //{
+    //
+    //            //Coinname = coinname ?? throw new ArgumentNullException(nameof(coinname));
+    //            //Avgblocktime = avgblocktime == TimeSpan.Zero ? throw new ArgumentOutOfRangeException(nameof(avgblocktime)) : avgblocktime;
+    //            //Networkhashrate = networkhashrate == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(networkhashrate)) : networkhashrate;
+    //            //Blockreward = blockreward == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(blockreward)) : blockreward;
+    //            //Hashrate = hashrate == Decimal.Zero ? throw new ArgumentOutOfRangeException(nameof(hashrate)) : hashrate;
+    //        // provides an estimate of the probability
 
-    //    public class CoinStatsXMR : CoinStatsCryptoNote
-//    {
-//        public CoinStatsXMR(CoinsE coin, DateTime dts, TimeSpan dateTimeSpan, TimeSpan avgblocktime, decimal networkhashrate, decimal blockreward, decimal difficulty) : base(coin, dts, dateTimeSpan, avgblocktime, networkhashrate, blockreward, difficulty) { }
-//        //public CoinStatsXMR(IHTTPClientGetter getter, IGetterArgsHTTPClient getterargs)
-//        //{
-//        //    CoinStatsCryptoNote cs = getter.get(getterargs);
-//        //}
-//    }
-//public class CryptoCoinDifficulty
-//{
-//    string coinname;
-//    string aPIfull;
-//    public string Coinname { get => coinname; set => coinname = value; }
-//    public string APIfull { get => aPIfull; set => aPIfull = value; }
-//    public CryptoCoinDifficulty(string coinname, string aPIfull)
-//    {
-//        Coinname = coinname ?? throw new ArgumentNullException(nameof(coinname));
-//        APIfull = aPIfull ?? throw new ArgumentNullException(nameof(aPIfull));
-//    }
-//    public static async Task<int> GetDifficultyFromAPI(string requestUri)
-//    {
-//        if (string.IsNullOrWhiteSpace(requestUri))
-//        {
-//            throw new ArgumentException("message", nameof(requestUri));
-//        }
-//        // TODO: add validation tests on the requestUri string to ensure it passes basic URI rules
-//        var response = await HttpRequestFactory.Get(requestUri);
-//        // TODO: throw appropriate exception if a bad response is received
-//        // ToDo: parse response based on collection of requestUri rules
-//        // This is for XMR stats
-//        var rstr = response.ContentAsJson();
-//        // parse the JSON
-//        XMRMoneroblocksCoinStats stats = JsonConvert.DeserializeObject<XMRMoneroblocksCoinStats>(response.ContentAsJson());
-//        int dif = stats.difficulty;
-//        return dif;
-//    }
-//}
+
+    //    }
+    //public class CryptoCoinDifficulty
+    //{
+    //    string coinname;
+    //    string aPIfull;
+    //    public string Coinname { get => coinname; set => coinname = value; }
+    //    public string APIfull { get => aPIfull; set => aPIfull = value; }
+    //    public CryptoCoinDifficulty(string coinname, string aPIfull)
+    //    {
+    //        Coinname = coinname ?? throw new ArgumentNullException(nameof(coinname));
+    //        APIfull = aPIfull ?? throw new ArgumentNullException(nameof(aPIfull));
+    //    }
+    //    public static async Task<int> GetDifficultyFromAPI(string requestUri)
+    //    {
+    //        if (string.IsNullOrWhiteSpace(requestUri))
+    //        {
+    //            throw new ArgumentException("message", nameof(requestUri));
+    //        }
+    //        // TODO: add validation tests on the requestUri string to ensure it passes basic URI rules
+    //        var response = await HttpRequestFactory.Get(requestUri);
+    //        // TODO: throw appropriate exception if a bad response is received
+    //        // ToDo: parse response based on collection of requestUri rules
+    //        // This is for XMR stats
+    //        var rstr = response.ContentAsJson();
+    //        // parse the JSON
+    //        XMRMoneroblocksCoinStats stats = JsonConvert.DeserializeObject<XMRMoneroblocksCoinStats>(response.ContentAsJson());
+    //        int dif = stats.difficulty;
+    //        return dif;
+    //    }
+    //}
 }

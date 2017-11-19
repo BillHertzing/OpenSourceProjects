@@ -24,3 +24,4 @@ namespace ATAP.Cryptocurrency.WebGetClasses {
         public int Last_timestamp { get { return last_Timestamp; } }
     }
 }
+

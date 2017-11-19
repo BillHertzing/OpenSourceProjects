@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Threading.Tasks;
-using Fiver.Api.HttpClient;
+
 using Newtonsoft.Json;
 
 namespace ATAP.CryptoCurrency

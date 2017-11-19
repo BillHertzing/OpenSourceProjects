@@ -8,82 +8,78 @@ using System.Linq;
 
 namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
 {
-    public class CryptoCoinPrimitives
+    public class Fixture
     {
-        TimeSpan timeSpan;
-        double hashRatePerTimeSpan;
-        int hashRateUOM;
-        HashRate hashRate;
-        HashRate hashRate2X;
-        HashRate hashRate2T;
-        HashRate hashRate1000X;
-        PowerConsumption powerConsumption;
-        double feeAsAPercent;
+        public TimeSpan hashRateTimeSpan;
+        public double hashRatePerTimeSpan;
+        public HashRate hashRate;
+        public HashRate hashRate2X;
+        public HashRate hashRate2T;
+        public HashRate hashRate1000X;
+        public PowerConsumption powerConsumption;
+        public double feeAsAPercent;
+        public List<CoinsE> coinList;
 
-        public TimeSpan TimeSpan { get => timeSpan; set => timeSpan = value; }
         public HashRate HashRate { get => hashRate; set => hashRate = value; }
-        public HashRate HashRate2X { get => hashRate2X; set => hashRate2X = value; }
-        public HashRate HashRate2T { get => hashRate2T; set => hashRate2T = value; }
         public double HashRatePerTimeSpan { get => hashRatePerTimeSpan; set => hashRatePerTimeSpan = value; }
-        public int HashRateUOM { get => hashRateUOM; set => hashRateUOM = value; }
-        public PowerConsumption PowerConsumption { get => powerConsumption; set => powerConsumption = value; }
-        public double FeeAsAPercent { get => feeAsAPercent; set => feeAsAPercent = value; }
 
-        public CryptoCoinPrimitives()
+
+        public Fixture()
         {
-            timeSpan = new TimeSpan(0, 0, 1);
+            hashRateTimeSpan = new TimeSpan(0, 0, 1);
             hashRatePerTimeSpan = 10000;
-            hashRateUOM = 1;
-            hashRate = new HashRate(hashRatePerTimeSpan, hashRateUOM, timeSpan);
-            hashRate2X = new HashRate(hashRatePerTimeSpan * 2, hashRateUOM, timeSpan);
-            hashRate2T = new HashRate(hashRatePerTimeSpan, hashRateUOM, timeSpan + timeSpan);
-            hashRate1000X = new HashRate(hashRatePerTimeSpan, hashRateUOM * 1000, timeSpan);
+            
+            hashRate = new HashRate(hashRatePerTimeSpan,  hashRateTimeSpan);
+            hashRate2X = new HashRate(hashRatePerTimeSpan * 2,  hashRateTimeSpan);
+            hashRate2T = new HashRate(hashRatePerTimeSpan,  hashRateTimeSpan + hashRateTimeSpan);
+            hashRate1000X = new HashRate(hashRatePerTimeSpan * 1000,  hashRateTimeSpan);
             feeAsAPercent = 1.0;
-
-
+            coinList = new List<CoinsE> { CoinsE.ETH, CoinsE.BTC };
+            
         }
     }
-        public class CryptoCoinUnitTests : IClassFixture<CryptoCoinPrimitives>
+        public class CryptoCoinHashRateUnitTests : IClassFixture<Fixture>
     {
-        CryptoCoinPrimitives cryptoCoinPrimitives;
-        public CryptoCoinUnitTests(CryptoCoinPrimitives cryptoCoinPrimitives)
+        Fixture fixture;
+        public CryptoCoinHashRateUnitTests(Fixture cryptoCoinPrimitives)
         {
-            this.cryptoCoinPrimitives = cryptoCoinPrimitives;
+            this.fixture = cryptoCoinPrimitives;
         }
         [Fact]
-        public void HashRateTest()
+        public void HashRateConstructorTest()
         {
-            var h = new HashRate(cryptoCoinPrimitives.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRateUOM, cryptoCoinPrimitives.TimeSpan);
-            Assert.Equal(h.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRatePerTimeSpan);
+            var h = new HashRate(fixture.HashRatePerTimeSpan, fixture.hashRateTimeSpan);
+            Assert.Equal(h.HashRatePerTimeSpan, fixture.HashRatePerTimeSpan);
+            Assert.Equal(h.HashRateTimeSpan, fixture.hashRateTimeSpan);
         }
     }
-        public class CryptoCoinBuilderUnitTests : IClassFixture<CryptoCoinPrimitives>
+        public class CryptoCoinBuilderUnitTests : IClassFixture<Fixture>
     {
-        CryptoCoinPrimitives cryptoCoinPrimitives;
-        public CryptoCoinBuilderUnitTests(CryptoCoinPrimitives cryptoCoinPrimitives)
+        Fixture fixture;
+        public CryptoCoinBuilderUnitTests(Fixture cryptoCoinPrimitives)
         {
-            this.cryptoCoinPrimitives = cryptoCoinPrimitives;
+            this.fixture = cryptoCoinPrimitives;
         }
         [Fact]
         public void ReturnsObjectOfCryptoCoinTypeHavingDefaultCoinsEValue() 
         {
             var b = new CryptoCoinBuilder();
             var c = b.Build();
-            Assert.Equal(c.Coin, default(CoinsE));
+            Assert.Equal(default(CoinsE), c.Coin);
         }
         [Fact]
         public void WithDefaultCoinEReturnsObjectOfCryptoCoinTypeHavingDefaultCoinsEValue()
         {
             var b = new CryptoCoinBuilder();
             var c = b.AddCoin(default(CoinsE)).Build();
-            Assert.Equal(c.Coin, default(CoinsE));
+            Assert.Equal(default(CoinsE), c.Coin);
         }
         [Fact]
         public void WithBTCCoinEReturnsObjectOfCryptoCoinTypeHavingBTCCoinValue()
         {
             var b = new CryptoCoinBuilder();
             var c = b.AddCoin(CoinsE.BTC).Build();
-            Assert.Equal(c.Coin, CoinsE.BTC);
+            Assert.Equal(CoinsE.BTC, c.Coin);
         }
         [Fact]
         public void WithRandomCoinEReturnsObjectOfCryptoCoinTypeHavingSameCoinValue()
@@ -98,13 +94,15 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
         [Fact]
         public void WithNetworkHashRateReturnsObjectOfCryptoCoinTypeHavingSettableGettableNetworkHashRate()
         {
-            var b = new CryptoCoinBuilder();
-                        var c = b.AddCoin(CoinsE.BTC).AddHashRate(cryptoCoinPrimitives.HashRate).Build();
-            Assert.Equal(c.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
-            Assert.Equal(c.HashRate.HashRatePerTimeSpan, cryptoCoinPrimitives.HashRate.HashRatePerTimeSpan);
+            var a = CryptoCoinBuilder.CreateNew()
+                        .AddCoin(CoinsE.BTC)
+                        .AddHashRate(fixture.HashRate)
+                        .Build();
+            Assert.Equal(a.HashRate.HashRatePerTimeSpan, fixture.HashRate.HashRatePerTimeSpan);
+            Assert.Equal(a.HashRate.HashRatePerTimeSpan, fixture.HashRate.HashRatePerTimeSpan);
         }
-    }
-    public class CryptoCoinAndBuilderUnitTests
+        [Fact]
+        void NumCoinsCreated()
         {
             // Test for method that returns the average number of coins generated based on coin, miner hashrate, and TimeSpan
             //[Fact]
@@ -116,6 +114,14 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
             //    //CryptoNoteCoinStats cncs = new CryptoNoteCoinStats(Coins.XMR)
             //    Assert.NotNull(_avgNumCCoinsCreated);
             //}
-
         }
+
+        //[Fact]
+        //[ExpectedException(typeof(System.ArgumentException))]
+        //public void GetDifficultyFromAPIThrowsArgumentExceptionOnIsNullOrWhiteSpace()
+        //{
+        //    CryptoCoinDifficulty D = new CryptoCoinDifficulty("XMR", "");
+        //}
     }
+
+}
