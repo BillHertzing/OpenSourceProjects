@@ -101,7 +101,7 @@ namespace ATAP.CryptoCurrency
     // NormalizedAverageShareOfEmittedCoinsDS_FromHTTPClient
     // 
 
-    public partial class CryptoCoin
+    public partial class CryptoCoinNetworkInfo
     {
 
         

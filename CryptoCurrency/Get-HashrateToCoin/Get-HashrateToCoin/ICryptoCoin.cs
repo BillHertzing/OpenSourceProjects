@@ -2,7 +2,7 @@
 using ATAP.DateTimeUtilities;
 namespace ATAP.CryptoCurrency
 {
-    public interface ICryptoCoin : ICryptoCoinE, IDTSandSpan, IHashRate, IAvgBlockTime
+    public interface ICryptoCoinNetworkInfo : ICryptoCoinE, IDTSandSpan, IHashRate, IAvgBlockTime
     {
     }
 }

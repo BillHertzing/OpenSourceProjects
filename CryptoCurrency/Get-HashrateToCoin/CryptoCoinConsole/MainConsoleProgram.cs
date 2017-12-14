@@ -51,8 +51,8 @@ namespace CryptoCoinConsole {
                 var profitabilityTimeSpan = new TimeSpan(1, 0, 0);
 
 
-                // declare an initially empty dictionary, keyed by CoinE, to hold a CryptoCoin object 
-                ConcurrentDictionary<CoinsE, CryptoCoin> cryptoCoins = new ConcurrentDictionary<CoinsE, CryptoCoin>();
+                // declare an initially empty dictionary, keyed by CoinE, to hold a CryptoCoinNetworkInfo object 
+                ConcurrentDictionary<CoinsE, CryptoCoinNetworkInfo> cryptoCoins = new ConcurrentDictionary<CoinsE, CryptoCoinNetworkInfo>();
                 // declare an initially empty dictionary, keyed by CoinE, to hold a  Dictionary<CoinsE,double> 
                 // ToDo: figure out how to allow the dictionary to support both fiat and crypto currencies in either the outer or nested dictionaries, for now, use a string as the key
                 ConcurrentDictionary<CoinsE, Dictionary<string, double>> exchangeRates = new ConcurrentDictionary<CoinsE, Dictionary<string, double>>();
@@ -159,7 +159,7 @@ namespace CryptoCoinConsole {
                                 //ToDo: make averageShareOfBlockRewardDT a console choice
                                 //var averageShareOfBlockRewardDT = new AverageShareOfBlockRewardDT(new TimeSpan(0, 0, 1), new TimeSpan(0, 0, 1), mr01.Miners().HashRate, cc.HashRate, cc.BlockRewardPerBlock)
                                 //ToDo: make numCoins a console choice
-                                //var numCoins = CryptoCoin.AverageShareOfBlockRewardPerNetworkHashRateSpanSafe(averageShareOfBlockRewardDT);
+                                //var numCoins = CryptoCoinNetworkInfo.AverageShareOfBlockRewardPerNetworkHashRateSpanSafe(averageShareOfBlockRewardDT);
                             }
                             break;
                         case 2:
@@ -218,7 +218,7 @@ namespace CryptoCoinConsole {
                                                 {
                                                     ///ToDo: remove the delay and make a call to webGet instead
                                                     Task.Delay(1000, cancellationSource.Token);
-                                                    cryptoCoins[coin] = CryptoCoinBuilder.CreateNew().AddCoin(coin).AddHashRate(new HashRate(17000000, new TimeSpan(0, 0, 1))).Build();
+                                                    cryptoCoins[coin] = CryptoCoinNetworkInfoBuilder.CreateNew().AddCoin(coin).AddHashRate(new HashRate(17000000, new TimeSpan(0, 0, 1))).Build();
                                                 }, cancellationSource.Token);
                                             }
 
@@ -308,10 +308,10 @@ namespace CryptoCoinConsole {
                                             /*
                                             // Get the network information for this coin from the ConcurrentDictionary cryptoCoin
                                             // if cryptoCoin does not contain the key for this coin, update that dictionary with a Lazy function 
-                                            CryptoCoin cryptoCoin = cryptoCoins.GetOrAdd(coin.ToString(), x => new Lazy<CryptoCoin>(() =>
+                                            CryptoCoinNetworkInfo cryptoCoin = cryptoCoins.GetOrAdd(coin.ToString(), x => new Lazy<CryptoCoinNetworkInfo>(() =>
                                             {
-                                                // ToDo: call webGet for the CryptoCoin network information for this coin
-                                                return CryptoCoinBuilder.CreateNew().AddCoin(coin).Build();
+                                                // ToDo: call webGet for the CryptoCoinNetworkInfo network information for this coin
+                                                return CryptoCoinNetworkInfoBuilder.CreateNew().AddCoin(coin).Build();
                                             }));
 
                                             // Get the exchangeRate information for this coin from the ConcurrentDictionary currencyExchangeRate
@@ -322,7 +322,7 @@ namespace CryptoCoinConsole {
                                                 return 0.001;
                                             }));
                                             */
-                                            CryptoCoin cryptoCoin;
+                                            CryptoCoinNetworkInfo cryptoCoin;
                                             // This is just a placeholder to get the branch to compile again, it won't work
                                             if (!cryptoCoins.TryGetValue(coin, out cryptoCoin)) throw new Exception("uh-oh");
                                             Dictionary<string, double> innerDict;
@@ -331,7 +331,7 @@ namespace CryptoCoinConsole {
                                             if (!exchangeRates.TryGetValue(coin, out innerDict)) throw new Exception("uh-oh");
                                             currencyExchangeRate = innerDict[profitabilityISOCurrencySymbol];
                                             // calculate the average number of coins generated by this miner during the profitabilityTimeSpan
-                                            var averageShareOfBlockRewardPerSpan = CryptoCoin.AverageShareOfBlockRewardPerSpanFast(new AverageShareOfBlockRewardDT(
+                                            var averageShareOfBlockRewardPerSpan = CryptoCoinNetworkInfo.AverageShareOfBlockRewardPerSpanFast(new AverageShareOfBlockRewardDT(
                                                 cryptoCoin.AvgBlockTime, profitabilityTimeSpan, inData.Item5[coin], cryptoCoin.HashRate, cryptoCoin.BlockRewardPerBlock
                                                 ), profitabilityTimeSpan);
 

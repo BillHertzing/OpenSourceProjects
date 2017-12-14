@@ -63,21 +63,21 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
         [Fact]
         public void ReturnsObjectOfCryptoCoinTypeHavingDefaultCoinsEValue() 
         {
-            var b = new CryptoCoinBuilder();
+            var b = new CryptoCoinNetworkInfoBuilder();
             var c = b.Build();
             Assert.Equal(default(CoinsE), c.Coin);
         }
         [Fact]
         public void WithDefaultCoinEReturnsObjectOfCryptoCoinTypeHavingDefaultCoinsEValue()
         {
-            var b = new CryptoCoinBuilder();
+            var b = new CryptoCoinNetworkInfoBuilder();
             var c = b.AddCoin(default(CoinsE)).Build();
             Assert.Equal(default(CoinsE), c.Coin);
         }
         [Fact]
         public void WithBTCCoinEReturnsObjectOfCryptoCoinTypeHavingBTCCoinValue()
         {
-            var b = new CryptoCoinBuilder();
+            var b = new CryptoCoinNetworkInfoBuilder();
             var c = b.AddCoin(CoinsE.BTC).Build();
             Assert.Equal(CoinsE.BTC, c.Coin);
         }
@@ -87,14 +87,14 @@ namespace ATAP.CryptoCurrency.CryptoCoinAndBuilderUnitTests
             var lastCoinValue = Enum.GetValues(typeof(CoinsE)).Cast<CoinsE>().Max();
             var firstCoinValue = Enum.GetValues(typeof(CoinsE)).Cast<CoinsE>().Min();
             var randomCoin = (CoinsE) new Random().Next((int)firstCoinValue, (int)lastCoinValue+1);
-            var b = new CryptoCoinBuilder();
+            var b = new CryptoCoinNetworkInfoBuilder();
             var c = b.AddCoin(randomCoin).Build();
             Assert.Equal(c.Coin, randomCoin);
         }
         [Fact]
         public void WithNetworkHashRateReturnsObjectOfCryptoCoinTypeHavingSettableGettableNetworkHashRate()
         {
-            var a = CryptoCoinBuilder.CreateNew()
+            var a = CryptoCoinNetworkInfoBuilder.CreateNew()
                         .AddCoin(CoinsE.BTC)
                         .AddHashRate(fixture.HashRate)
                         .Build();

@@ -80,18 +80,18 @@ namespace ATAP.CryptoCurrency
         }
         public double BlockRewardPerBlock { get { return blockRewardPerBlock; } set { blockRewardPerBlock = value; } }
     }
-    public partial class CryptoCoin : ICryptoCoin
+    public partial class CryptoCoinNetworkInfo : ICryptoCoinNetworkInfo
     {
         TimeSpan avgBlockTime;
         double blockRewardPerBlock;
         CoinsE coin;
         DTSandSpan dTSandSpan;
         HashRate hashRate;
-        public CryptoCoin(CoinsE coin)
+        public CryptoCoinNetworkInfo(CoinsE coin)
         {
             this.coin = coin;
         }
-        public CryptoCoin(CoinsE coin, DTSandSpan dtss, HashRate hashRate, TimeSpan avgBlockTime, double blockRewardPerBlock)
+        public CryptoCoinNetworkInfo(CoinsE coin, DTSandSpan dtss, HashRate hashRate, TimeSpan avgBlockTime, double blockRewardPerBlock)
         {
             this.coin = coin;
             dTSandSpan = dtss;
@@ -130,51 +130,51 @@ namespace ATAP.CryptoCurrency
 
     }
 
-    public interface ICryptoCoinBuilder
+    public interface ICryptoCoinNetworkInfoBuilder
     {
-        CryptoCoin Build();
+        CryptoCoinNetworkInfo Build();
     }
 
-    public class CryptoCoinBuilder
+    public class CryptoCoinNetworkInfoBuilder
     {
         TimeSpan avgBlockTime;
         double blockRewardPerBlock;
         CoinsE coin;
         DTSandSpan dTSandSpan;
         HashRate hashRate;
-        public CryptoCoinBuilder() { }
-        public static CryptoCoinBuilder CreateNew()
+        public CryptoCoinNetworkInfoBuilder() { }
+        public static CryptoCoinNetworkInfoBuilder CreateNew()
         {
-            return new CryptoCoinBuilder();
+            return new CryptoCoinNetworkInfoBuilder();
         }
-        public CryptoCoinBuilder AddAvgBlockTime(TimeSpan avgBlockTime)
+        public CryptoCoinNetworkInfoBuilder AddAvgBlockTime(TimeSpan avgBlockTime)
         {
             this.avgBlockTime = avgBlockTime;
             return this;
         }
-        public CryptoCoinBuilder AddBlockReward(double blockRewardPerBlock)
+        public CryptoCoinNetworkInfoBuilder AddBlockReward(double blockRewardPerBlock)
         {
             this.blockRewardPerBlock = blockRewardPerBlock;
             return this;
         }
-        public CryptoCoinBuilder AddCoin(CoinsE coin)
+        public CryptoCoinNetworkInfoBuilder AddCoin(CoinsE coin)
         {
             this.coin = coin;
             return this;
         }
-        public CryptoCoinBuilder AddDTSAndSpan(DTSandSpan dTSandSpan)
+        public CryptoCoinNetworkInfoBuilder AddDTSAndSpan(DTSandSpan dTSandSpan)
         {
             this.dTSandSpan = dTSandSpan;
             return this;
         }
-        public CryptoCoinBuilder AddHashRate(HashRate hashRate)
+        public CryptoCoinNetworkInfoBuilder AddHashRate(HashRate hashRate)
         {
             this.hashRate = hashRate;
             return this;
         }
-        public CryptoCoin Build()
+        public CryptoCoinNetworkInfo Build()
         {
-            return new CryptoCoin(coin, dTSandSpan, hashRate, avgBlockTime, blockRewardPerBlock);
+            return new CryptoCoinNetworkInfo(coin, dTSandSpan, hashRate, avgBlockTime, blockRewardPerBlock);
         }
     }
     //public class CryptoCoins

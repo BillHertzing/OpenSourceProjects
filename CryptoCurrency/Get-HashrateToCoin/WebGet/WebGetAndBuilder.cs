@@ -8,10 +8,10 @@ using Polly;
 using Polly.Registry;
 using Polly.Timeout;
 namespace ATAP.WebGet {
-    // Within an application, there should only be one static instance of a HTPClient. This class provides that, and a set of static async tasks to interact with it.
     // see this article for "why" https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
     // This article was used as a basis for ensuring that there is only one instance of WebGet in an app: http://csharpindepth.com/Articles/General/Singleton.aspx
-    public sealed class WebGet {
+    public sealed class WebGet : IWebGet
+    {
         static readonly Lazy<WebGet> lazy = new Lazy<WebGet>(() => new WebGet());
         HttpClient httpClient;
         List<HttpStatusCode> httpStatusCodesWorthRetrying;
@@ -51,23 +51,26 @@ namespace ATAP.WebGet {
             Policy p = registryValue.Pol;
 
 
-            return await p.ExecuteAsync<T>(async() => {
+            return await p.ExecuteAsync<T>(async () =>
+            {
                 HttpRequestMessage httpRequestMessageInner = HttpRequestMessageBuilder.CreateNew()
                                                  .AddMethod(registryValue.Req.Method)
                                                  .AddRequestUri(registryValue.Req.RequestUri)
                                                  // .AddHeaders(registryValue.Req.Headers);
                                                  .Build();
                 HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessageInner);
-               
-                return httpResponseMessage.AsType<T>(); });
+
+                return httpResponseMessage.AsType<T>();
+            });
         }
-        public  Task<T> WebGetFast<T>(WebGetRegistryKey reqID)
+        public Task<T> WebGetFast<T>(WebGetRegistryKey reqID)
         {
             WebGetRegistryValue registryValue = webGetRegistry[reqID];
             Policy p = registryValue.Pol;
 
 
-            return  p.ExecuteAsync<T>(async () => {
+            return p.ExecuteAsync<T>(async () =>
+            {
                 HttpRequestMessage httpRequestMessageInner = HttpRequestMessageBuilder.CreateNew()
                                                  .AddMethod(registryValue.Req.Method)
                                                  .AddRequestUri(registryValue.Req.RequestUri)
@@ -87,12 +90,16 @@ namespace ATAP.WebGet {
                                                              .AddRequestUri(registryValue.Req.RequestUri)
                                                              // .AddHeaders(registryValue.Req.Headers);
                                                              .Build();
-            return await p.ExecuteAsync(async() => { HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessageInner);
-                return httpResponseMessage.AsString(); });
+            return await p.ExecuteAsync(async () =>
+            {
+                HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessageInner);
+                return httpResponseMessage.AsString();
+            });
         }
         public async Task<string> ASyncWebGetFast(Policy p, HttpRequestMessage httpRequestMessage)
         {
-            return await p.ExecuteAsync(async () => {
+            return await p.ExecuteAsync(async () =>
+            {
                 HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(httpRequestMessage);
                 return httpResponseMessage.AsString();
             });
@@ -100,14 +107,14 @@ namespace ATAP.WebGet {
         public Task<T> AsyncWebGetSafe<T>(WebGetRegistryKey reqID)
         {
             throw new NotImplementedException("'AsyncWebGetSafe<T> not yet implemented");
-        //if (string.IsNullOrWhiteSpace(requestUri))
-        //{
-        //    //ToDo: Better error handling on the throw
-        //    throw new ArgumentException("message", nameof(requestUri));
-        //}
-        // ToDo Add validation tests
-        // ToDo does the dictionary contain this key
-        //return ASyncWebGetFast<T>(reqID);
+            //if (string.IsNullOrWhiteSpace(requestUri))
+            //{
+            //    //ToDo: Better error handling on the throw
+            //    throw new ArgumentException("message", nameof(requestUri));
+            //}
+            // ToDo Add validation tests
+            // ToDo does the dictionary contain this key
+            //return ASyncWebGetFast<T>(reqID);
         }
         public List<HttpStatusCode> HttpStatusCodesWorthRetrying { get => httpStatusCodesWorthRetrying; set => httpStatusCodesWorthRetrying = value; }
         public static WebGet Instance { get { return lazy.Value; } }
