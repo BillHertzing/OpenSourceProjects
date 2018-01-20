@@ -13,10 +13,4 @@
     <ProjectReference Include="..\DateTimeUtilities\DateTimeUtilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Fiver.Api.HttpClient">
-      <HintPath>..\..\..\ReferencedProjects\Fiver.Api.HttpClient\Fiver.Api.HttpClient\bin\Debug\netstandard2.0\Fiver.Api.HttpClient.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
